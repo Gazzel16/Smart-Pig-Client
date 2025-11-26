@@ -30,6 +30,23 @@ class DashBoardFragment : Fragment() {
     ): View {
         _binding = FragmentDashBoardBinding.inflate(inflater, container, false)
 
+
+        binding.chatBotCard.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace((requireActivity() as MainActivity).binding.fragmentContainer.id,
+                    DashboardChatBotFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+        binding.sensorCard.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace((requireActivity() as MainActivity).binding.fragmentContainer.id,
+                    DashboardSensorFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
         binding.analyticsCard.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace((requireActivity() as MainActivity).binding.fragmentContainer.id,

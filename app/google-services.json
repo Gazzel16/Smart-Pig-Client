@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "867319282970",
+    "firebase_url": "https://muntirent-66bdb-default-rtdb.firebaseio.com",
+    "project_id": "muntirent-66bdb",
+    "storage_bucket": "muntirent-66bdb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867319282970:android:f880fbad96a68e660d00a3",
+        "android_client_info": {
+          "package_name": "com.client.muntirent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsMxg2lhB7XUSgICWZTbWTpFbc9Gi8Sz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867319282970:android:5a2e7775f15ebdd10d00a3",
+        "android_client_info": {
+          "package_name": "com.client.smartpigclient"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsMxg2lhB7XUSgICWZTbWTpFbc9Gi8Sz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

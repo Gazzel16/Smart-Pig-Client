@@ -88,6 +88,7 @@
             android:orientation="horizontal">
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/sensorCard"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
@@ -155,6 +156,7 @@
 
             <!-- Card 2 -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/chatBotCard"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
