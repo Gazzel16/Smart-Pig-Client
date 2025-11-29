@@ -82,6 +82,7 @@
             app:layout_constraintStart_toStartOf="@+id/rvChat"
             app:layout_constraintTop_toTopOf="@+id/rvChat">
 
+            <!-- Header / Title -->
             <TextView
                 android:id="@+id/input4"
                 android:layout_width="wrap_content"
@@ -89,10 +90,11 @@
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"
                 android:fontFamily="sans-serif"
-                android:text="May i help something?"
+                android:text="How Can i help you today?"
                 android:textSize="25sp"
                 android:textStyle="bold" />
 
+            <!-- Quick Question 1 -->
             <TextView
                 android:id="@+id/input1"
                 android:layout_width="match_parent"
@@ -101,27 +103,29 @@
                 android:gravity="center"
                 android:drawableRight="@drawable/send_ic1"
                 android:background="@drawable/edittext_bg"
-                android:text="How to use this app?" />
+                android:text="How do I know if a pig is sick?" />
 
+            <!-- Quick Question 2 -->
             <TextView
                 android:id="@+id/input2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:drawableRight="@drawable/send_ic1"
                 android:gravity="center"
+                android:drawableRight="@drawable/send_ic1"
                 android:background="@drawable/edittext_bg"
-                android:text="What is landlord?" />
+                android:text="What is the current temperature and humidity in the pig enclosure?" />
 
+            <!-- Quick Question 3 -->
             <TextView
                 android:id="@+id/input3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:drawableRight="@drawable/send_ic1"
                 android:gravity="center"
+                android:drawableRight="@drawable/send_ic1"
                 android:background="@drawable/edittext_bg"
-                android:text="What is landlord and tenant?" />
+                android:text="What should I do if a pig stops eating?" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

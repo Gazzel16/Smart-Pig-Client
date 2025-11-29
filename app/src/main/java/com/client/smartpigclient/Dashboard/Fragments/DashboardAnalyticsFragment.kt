@@ -12,7 +12,9 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.client.smartpigclient.Cages.Api.FetchCageRI
-import com.client.smartpigclient.Dashboard.Api.FetchAllPigsRI
+import com.client.smartpigclient.Dashboard.Api.DashBoardApi
+import com.client.smartpigclient.Dashboard.Api.DashBoardRI
+
 import com.client.smartpigclient.R
 import com.client.smartpigclient.databinding.FragmentDashboardAnalyticsBinding
 import kotlinx.coroutines.launch
@@ -39,7 +41,7 @@ class DashboardAnalyticsFragment : Fragment() {
     }
 
     private fun pigsAndCagesChart() {
-        val apiPigs = FetchAllPigsRI.getInstance()
+        val apiPigs = DashBoardRI.getInstance()
         val apiCage = FetchCageRI.getInstance() // assuming this returns a list of cages
 
         lifecycleScope.launch {
@@ -125,7 +127,7 @@ class DashboardAnalyticsFragment : Fragment() {
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.typeDropdown.adapter = typeAdapter
 
-        val api = FetchAllPigsRI.getInstance()
+        val api = DashBoardRI.getInstance()
         lifecycleScope.launch {
             val allPigs = try {
                 api.fetchAllPigs()

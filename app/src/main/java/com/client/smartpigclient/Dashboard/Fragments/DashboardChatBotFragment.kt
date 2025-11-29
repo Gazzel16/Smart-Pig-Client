@@ -5,34 +5,104 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.client.smartpigclient.R
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.client.smartpigclient.Dashboard.Adapter.ChatAdapter
+import com.client.smartpigclient.Dashboard.Model.ChatMessage
+import com.client.smartpigclient.Dashboard.Api.DashBoardRI
+import com.client.smartpigclient.Dashboard.Model.ChatRequest
 import com.client.smartpigclient.databinding.FragmentDashboardChatBotBinding
-
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.client.smartpigclient.R
+import kotlinx.coroutines.launch
 
 class DashboardChatBotFragment : Fragment() {
 
     private var _binding: FragmentDashboardChatBotBinding? = null
     private val binding get() = _binding!!
 
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var chatAdapter: ChatAdapter
+    private val messages = mutableListOf<ChatMessage>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDashboardChatBotBinding.inflate(inflater, container, false)
+
+        setupRecyclerView()
+        setupButtons()
+
         return binding.root
+    }
+
+    private fun setupRecyclerView() {
+        chatAdapter = ChatAdapter(messages)
+        binding.rvChat.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvChat.adapter = chatAdapter
+    }
+
+    private fun setupButtons() {
+
+        // send button
+        binding.sentBtn.setOnClickListener {
+            binding.questionInputs.visibility = View.GONE
+            val text = binding.inputMessage.text.toString().trim()
+            if (text.isNotEmpty()) {
+                sendMessage(text)
+            }
+        }
+
+        // Suggested quick questions
+        binding.input1.setOnClickListener {
+            binding.questionInputs.visibility = View.GONE
+            sendMessage(binding.input1.text.toString())
+        }
+        binding.input2.setOnClickListener {
+            binding.questionInputs.visibility = View.GONE
+            sendMessage(binding.input2.text.toString())
+        }
+        binding.input3.setOnClickListener {
+            binding.questionInputs.visibility = View.GONE
+            sendMessage(binding.input3.text.toString())
+        }
+    }
+
+    private fun sendMessage(text: String) {
+        // Add user message
+        chatAdapter.addMessage(ChatMessage(text, true))
+        scrollToBottom()
+
+        binding.inputMessage.setText("")
+
+        // Call API with user text
+        fetchBotResponse(text)
+    }
+
+    private fun fetchBotResponse(userText: String) {
+        lifecycleScope.launch {
+            try {
+                val api = DashBoardRI.getInstance()
+
+                // Correct API call
+                val response = api.chatBotResponse(
+                    ChatRequest(request = userText)
+                )
+
+                // Add bot message using response.response
+                chatAdapter.addMessage(ChatMessage(response.response, false))
+                scrollToBottom()
+
+            } catch (e: Exception) {
+                chatAdapter.addMessage(ChatMessage("Error: Cannot connect to server.", false))
+                scrollToBottom()
+            }
+        }
+    }
+
+    private fun scrollToBottom() {
+        binding.rvChat.post {
+            binding.rvChat.smoothScrollToPosition(messages.size - 1)
+        }
     }
 
     override fun onResume() {
@@ -42,18 +112,7 @@ class DashboardChatBotFragment : Fragment() {
 
     override fun onDestroyView() {
         requireActivity().findViewById<View>(R.id.bottom_navigation)?.visibility = View.VISIBLE
-        super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DashboardChatBotFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        super.onDestroyView()
     }
 }

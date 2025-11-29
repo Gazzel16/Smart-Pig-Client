@@ -9,7 +9,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.client.smartpigclient.Cages.Fragments.CagesQrScannerFragment
 import com.client.smartpigclient.Dashboard.Adapter.DashBoardAdapter
-import com.client.smartpigclient.Dashboard.Api.FetchAllPigsRI
+import com.client.smartpigclient.Dashboard.Api.DashBoardApi
+import com.client.smartpigclient.Dashboard.Api.DashBoardRI
+
 import com.client.smartpigclient.MainActivity
 import com.client.smartpigclient.Pigs.Fragments.ScanPigFragment
 import com.client.smartpigclient.Pigs.Model.PigsModel
@@ -87,7 +89,7 @@ class DashBoardFragment : Fragment() {
     private fun fetchPigs() {
         lifecycleScope.launch {
             try {
-                val api = FetchAllPigsRI.getInstance()
+                val api = DashBoardRI.getInstance()
                 val response = api.fetchAllPigs()
 
                 pigsList.clear()
