@@ -29,7 +29,7 @@ class CagesAdapter(
         val binding = holder.binding
 
         // Set cage name
-        binding.name.text = "Cage Name: ${cage.name}"
+        binding.name.text = "${cage.name}"
 
         // Set pig count
         binding.pigCount.text = "Pigs: ${cage.pigCount}"

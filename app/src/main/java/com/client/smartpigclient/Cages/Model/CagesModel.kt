@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class CageModel(
     val id: String,
     val name: String,
-    val pigCount: Int = 0, // Number of pigs in this cage
+    var pigCount: Int = 0, // Number of pigs in this cage
     val qr_url: String? = null // optional QR code URL if any
 ) : Parcelable
 

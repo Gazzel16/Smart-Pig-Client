@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:background="@drawable/rounded_top_corners"
+    android:backgroundTint="@color/white"
+    android:layout_marginLeft="3dp"
+    android:layout_marginRight="3dp"
+    android:elevation="8dp"
+    android:layout_gravity="bottom"
+    tools:context=".Pigs.Fragments.BottomModalFragment">
+
+
+    <EditText
+        android:id="@+id/editTextText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:background="@drawable/edittext_bg"
+        android:layout_margin="8dp"
+        android:inputType="text"
+        android:hint="Buyer Name" />
+
+    <Button
+        android:id="@+id/markAsSold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:backgroundTint="@color/blueGreen"
+        android:layout_marginRight="8dp"
+        android:text="Mark as Sold" />
+</LinearLayout>

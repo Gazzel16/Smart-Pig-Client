@@ -51,6 +51,7 @@ class PigsAdapter(
         binding.birthDate.text = pig.birthDate ?: "Unknown Birthdate"
         binding.gender.text = pig.gender ?: "Unknown Gender"
 
+
         // Images
         Glide.with(binding.root.context)
             .load(pig.image_url ?: R.drawable.pig)
@@ -69,12 +70,14 @@ class PigsAdapter(
             .into(binding.qrCode)
 
         binding.qrCode.setOnClickListener {
-            // Open dialog with the correct full QR URL
-            val fragment = PigsQrDialog.newInstance(fullQrUrl, pig.id)
-            fragment.show(
-                (holder.binding.root.context as FragmentActivity).supportFragmentManager,
-                "qrDialog"
-            )
+            fullQrUrl?.let { url ->
+                val fragment = PigsQrDialog.newInstance(url, pig.id)
+                fragment.show(
+                    (holder.binding.root.context as FragmentActivity).supportFragmentManager,
+                    "qrDialog"
+                )
+            }
+
         }
 
 

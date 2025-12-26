@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.client.smartpigclient.Cages.Api.AddCageRI
+import com.client.smartpigclient.Cages.Fragments.CagesFragment
 import com.client.smartpigclient.Cages.Model.CageModel
 import com.client.smartpigclient.Cages.Model.CageRequest
 import com.client.smartpigclient.databinding.FragmentCagesDialogBinding
@@ -15,10 +16,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CagesDialog : DialogFragment() {
+class CagesDialog(private val listener: OnCageAddedListener) : DialogFragment() {
+
 
     private var _binding: FragmentCagesDialogBinding? = null
     private val binding get() = _binding!!
+
+    interface OnCageAddedListener {
+        fun onCageAdded()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +57,7 @@ class CagesDialog : DialogFragment() {
                 val response: CageModel = api.addCage(request)
 
                 withContext(Dispatchers.Main) {
+                    listener.onCageAdded()
                     Toast.makeText(requireContext(), "Cage added: ${response.name}", Toast.LENGTH_SHORT).show()
                     binding.cageInput.text.clear()
                     dismiss() // close dialog only after success

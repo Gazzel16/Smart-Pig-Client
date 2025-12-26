@@ -2,6 +2,8 @@ package com.client.smartpigclient.Pigs.Api
 
 import com.client.smartpigclient.ApiConfig.ApiConfig
 import com.client.smartpigclient.Cages.Api.AddCageApi
+import com.client.smartpigclient.Pigs.Model.PigBuyerNameRequest
+import com.client.smartpigclient.Pigs.Model.PigCountResponse
 import com.client.smartpigclient.Pigs.Model.PigRequestModel
 import com.client.smartpigclient.Pigs.Model.PigsModel
 import okhttp3.MultipartBody
@@ -10,8 +12,10 @@ import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
@@ -77,6 +81,15 @@ interface UpdatePigsApi {
         @Part image: MultipartBody.Part? = null
     ): Response<PigRequestModel>
 }
+
+interface PigBuyerNameApi {
+    @PATCH("api/pigs/{pig_id}/buyer_name")
+    suspend fun pigBuyerName(
+        @Path("pig_id") pigId: String,
+        @Body data: PigBuyerNameRequest
+    ): Response<PigsModel>
+}
+
 interface FetchPigsApi {
 
     @GET("api/pigs/cage/{cage_id}")
@@ -185,3 +198,27 @@ object UpdatePigsRI {
             .create(UpdatePigsApi::class.java)
     }
 }
+
+object PigBuyerNameRI {
+    private val BASE_URL: String by lazy {
+        if (android.os.Build.FINGERPRINT.contains("generic") ||
+            android.os.Build.FINGERPRINT.contains("emulator")
+        ) {
+            "http://10.0.2.2:8000/" // Emulator
+        } else {
+            ApiConfig.BASE_URL // Physical device
+        }
+    }
+
+    fun getInstance(): PigBuyerNameApi {
+        val client = OkHttpClient.Builder().build()
+
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(PigBuyerNameApi::class.java)
+    }
+}
+

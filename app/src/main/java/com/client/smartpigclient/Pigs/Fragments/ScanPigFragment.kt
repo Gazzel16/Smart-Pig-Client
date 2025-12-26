@@ -1,12 +1,15 @@
 package com.client.smartpigclient.Pigs.Fragments
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.client.smartpigclient.Pigs.Api.FetchPigsByIdRI
@@ -24,6 +27,8 @@ class ScanPigFragment : Fragment() {
 
     private var _binding: FragmentScanPigBinding? = null
     private val binding get() = _binding!!
+    private var currentPig: PigsModel? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,9 +43,98 @@ class ScanPigFragment : Fragment() {
 
         // Start scanner automatically
         startScanner()
+        detailSections()
+
+        binding.markAsSold.setOnClickListener {
+            if (currentPig == null) {
+                Toast.makeText(requireContext(), "No pig loaded to mark as sold", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Open BottomModalFragment, passing current pig and listener
+            val modal = BottomModalFragment(currentPig!!, object : BottomModalListener {
+                override fun onMarkAsSold(updatedPig: PigsModel) {
+                    // Update local currentPig with the patched data from server
+                    currentPig = updatedPig
+
+                    // Update the UI
+                    binding.tvIsSold.text = if (updatedPig.isSold == true) "Yes" else "No"
+                    binding.tvBuyerName.text = updatedPig.buyerName ?: "N/A"
+
+                    // Disable button if pig is sold
+                    binding.markAsSold.isEnabled = updatedPig.isSold != true
+                    binding.markAsSold.alpha = if (updatedPig.isSold == true) 0.5f else 1f
+                }
+            })
+
+            // Show the modal
+            modal.show(parentFragmentManager, "BottomModal")
+        }
+
 
         binding.qrScan.setOnClickListener { startScanner() }
         binding.backBtn.setOnClickListener { requireActivity().onBackPressed() }
+    }
+
+    private fun detailSections(){
+
+        val tint = ContextCompat.getColor(requireContext(), R.color.blueGreen)
+        val noTint = ColorStateList.valueOf(Color.TRANSPARENT)
+
+        binding.overview.setTextColor(Color.parseColor("#FFFFFF"))
+        binding.health.setTextColor(Color.parseColor("#000000"))
+        binding.salesIn.setTextColor(Color.parseColor("#000000"))
+
+        binding.overview.backgroundTintList = ColorStateList.valueOf(tint)
+        binding.health.backgroundTintList = noTint
+        binding.salesIn.backgroundTintList = noTint
+
+        binding.overview.setOnClickListener {
+
+            binding.overview.backgroundTintList = ColorStateList.valueOf(tint)
+            binding.health.backgroundTintList = noTint
+            binding.salesIn.backgroundTintList = noTint
+
+            binding.overview.setTextColor(Color.parseColor("#FFFFFF"))
+            binding.health.setTextColor(Color.parseColor("#000000"))
+            binding.salesIn.setTextColor(Color.parseColor("#000000"))
+
+
+            binding.overViewTab.visibility = View.VISIBLE
+            binding.healthTab.visibility = View.GONE
+            binding.marketValueTab.visibility = View.GONE
+        }
+
+        binding.health.setOnClickListener {
+
+            binding.health.backgroundTintList = ColorStateList.valueOf(tint)
+            binding.overview.backgroundTintList = noTint
+            binding.salesIn.backgroundTintList = noTint
+
+            binding.overview.setTextColor(Color.parseColor("#000000"))
+            binding.health.setTextColor(Color.parseColor("#FFFFFF"))
+            binding.salesIn.setTextColor(Color.parseColor("#000000"))
+
+            binding.overViewTab.visibility = View.GONE
+            binding.healthTab.visibility = View.VISIBLE
+            binding.marketValueTab.visibility = View.GONE
+        }
+
+        binding.salesIn.setOnClickListener {
+
+            binding.salesIn.backgroundTintList = ColorStateList.valueOf(tint)
+            binding.overview.backgroundTintList = noTint
+            binding.health.backgroundTintList = noTint
+
+            binding.overview.setTextColor(Color.parseColor("#000000"))
+            binding.health.setTextColor(Color.parseColor("#000000"))
+            binding.salesIn.setTextColor(Color.parseColor("#FFFFFF"))
+
+            binding.overViewTab.visibility = View.GONE
+            binding.healthTab.visibility = View.GONE
+            binding.marketValueTab.visibility = View.VISIBLE
+        }
+
     }
 
     private fun startScanner() {
@@ -73,6 +167,10 @@ class ScanPigFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val pig: PigsModel = api.fetchPigsById(pigId)
+
+                currentPig = pig
+                binding.markAsSold.isEnabled = pig.isSold != true
+                binding.markAsSold.alpha = if (pig.isSold == true) 0.5f else 1f
 
                 withContext(Dispatchers.Main) {
                     // Populate UI

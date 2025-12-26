@@ -2,6 +2,7 @@ package com.client.smartpigclient.Dashboard.Fragments
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -55,9 +56,10 @@ class DashboardSensorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        tempHumidDescription()
+
         setupChart(binding.sensorChart)
         listenSensorData()
-       binding.sensorChart
     }
 
     private fun setupChart(chart: LineChart) {
@@ -138,6 +140,82 @@ class DashboardSensorFragment : Fragment() {
             override fun onCancelled(error: DatabaseError) {}
         })
     }
+
+    private fun tempHumidDescription() {
+        sensorRef.addValueEventListener(object : ValueEventListener {
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val temp = snapshot.child("temp").getValue(Double::class.java)?.toFloat()
+                val humid = snapshot.child("humid").getValue(Double::class.java)?.toFloat()
+
+                // Temperature description
+                if (temp != null) {
+                    // Cold
+                    if (temp < 20) {
+                        binding.tempDescription.text = "Too cold for pigs. Provide heating or bedding."
+                    }
+                    // Comfortable
+                    else if (temp >= 20 && temp < 25) {
+                        binding.tempDescription.text = "Cool environment. Pigs are comfortable."
+                    }
+                    // Warm
+                    else if (temp >= 25 && temp < 30) {
+                        binding.tempDescription.text = "Warm environment. Monitor pigs for slight heat stress."
+                    }
+                    // Hot
+                    else if (temp >= 30 && temp < 35) {
+                        binding.tempDescription.text = "Hot environment! Provide shade and water."
+                    }
+                    // Very hot
+                    else if (temp >= 35 && temp < 40) {
+                        binding.tempDescription.text = "Very hot! Pigs may reduce feed intake and pant."
+                    }
+                    // Extreme heat
+                    else if (temp >= 40 && temp <= 50) {
+                        binding.tempDescription.text = "Extreme heat! Immediate cooling required (water, shade)."
+                    }
+                    // Out of range
+                    else {
+                        binding.tempDescription.text = "Temperature out of expected range."
+                    }
+                }
+
+                // Humidity description
+                if (humid != null) {
+                    // Too dry
+                    if (humid < 50) {
+                        binding.humidDescription.text = "Air is too dry. Provide water and ventilation."
+                    }
+                    // Comfortable
+                    else if (humid >= 50 && humid <= 70) {
+                        binding.humidDescription.text = "Humidity is comfortable for pigs."
+                    }
+                    // Slightly high
+                    else if (humid >= 71 && humid <= 80) {
+                        binding.humidDescription.text = "Slightly high humidity. Monitor pigs."
+                    }
+                    // High
+                    else if (humid >= 81 && humid <= 90) {
+                        binding.humidDescription.text = "High humidity! Pigs may feel uncomfortable."
+                    }
+                    // Extreme
+                    else if (humid > 90) {
+                        binding.humidDescription.text = "Extreme humidity! Increase ventilation and keep pigs cool."
+                    }
+                    // Out of range
+                    else {
+                        binding.humidDescription.text = "Humidity out of expected range."
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Optional: log error
+                Log.e("Firebase", "Failed to read sensor data", error.toException())
+            }
+        })
+    }
+
     override fun onResume() {
         super.onResume()
         val bottomNav = requireActivity().findViewById<View>(R.id.bottom_navigation)
