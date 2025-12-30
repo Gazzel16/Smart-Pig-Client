@@ -2,6 +2,7 @@ package com.client.smartpigclient.Pigs.Api
 
 import com.client.smartpigclient.ApiConfig.ApiConfig
 import com.client.smartpigclient.Cages.Api.AddCageApi
+import com.client.smartpigclient.Pigs.Model.PigAnalyticsResponse
 import com.client.smartpigclient.Pigs.Model.PigBuyerNameRequest
 import com.client.smartpigclient.Pigs.Model.PigCountResponse
 import com.client.smartpigclient.Pigs.Model.PigRequestModel
@@ -102,6 +103,20 @@ interface FetchPigsByIdApi {
     @GET("api/pigs/{pig_id}")
     suspend fun fetchPigsById(@Path("pig_id") pigId: String): PigsModel
 }
+
+interface GetPigsAnalyticsSummaryApi {
+    @GET("/api/pigs/analytics/summary")
+    suspend fun getPigsAnalyticsSummary(): PigAnalyticsResponse
+}
+
+interface GetPigsAnalyticsSummaryByPeriodApi {
+    @GET("/api/pigs/analytics/summary/{year}/{month}")
+    suspend fun getPigsAnalyticsSummaryByPeriod(
+        @Path("year") year: Int,
+        @Path("month") month: Int,
+    ): PigAnalyticsResponse
+}
+
 object FetchPigsRI {
     private val BASE_URL: String by lazy {
         if (android.os.Build.FINGERPRINT.contains("generic") ||
@@ -222,3 +237,34 @@ object PigBuyerNameRI {
     }
 }
 
+object GetPigsAnalyticsRI {
+
+    private val BASE_URL: String by lazy {
+        if (android.os.Build.FINGERPRINT.contains("generic") ||
+            android.os.Build.FINGERPRINT.contains("emulator")
+        ) {
+            "http://10.0.2.2:8000/" // Emulator
+        } else {
+            ApiConfig.BASE_URL  // Physical device
+        }
+    }
+
+    private val retrofit: Retrofit by lazy {
+        val client = OkHttpClient.Builder().build()
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+
+    // For analytics API
+    fun getPigsAnalyticsSummaryApi(): GetPigsAnalyticsSummaryApi {
+        return retrofit.create(GetPigsAnalyticsSummaryApi::class.java)
+    }
+
+    fun getPigsAnalyticsSummaryByPeriodApi(): GetPigsAnalyticsSummaryByPeriodApi{
+        return retrofit.create(GetPigsAnalyticsSummaryByPeriodApi::class.java)
+    }
+}

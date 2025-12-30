@@ -34,7 +34,7 @@ class PigsAdapter(
 
 
         if (pig.isSold == true){
-            binding.isSold.text ="Sold"
+            binding.isSold.text ="Sold by: ${pig.buyerName}"
             binding.isSold.background.setTint(Color.parseColor("#C50B01")) // light red background
             binding.isSold.setTextColor(Color.parseColor("#FFFFFFFF"))
         }else{

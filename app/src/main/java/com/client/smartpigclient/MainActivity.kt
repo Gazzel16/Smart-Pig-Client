@@ -3,6 +3,7 @@ package com.client.smartpigclient
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         // Show DashboardFragment first
         replaceFragment(DashBoardFragment())
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         // Bottom navigation listener
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {

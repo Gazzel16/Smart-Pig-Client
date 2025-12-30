@@ -33,7 +33,7 @@ class DashBoardAdapter(
 
             // Sold Badge
             if (item.isSold == true) {
-                binding.isSold.text = "Sold"
+                binding.isSold.text = "Sold by:. ${item.buyerName}"
                 binding.isSold.backgroundTintList =
                     ColorStateList.valueOf(Color.parseColor("#E74C3C"))
             } else {
@@ -44,7 +44,7 @@ class DashBoardAdapter(
             }
 
             // Price
-            binding.price.text = "Price: ₱${item.price ?: 0}"
+            binding.price.text = "Price: ₱${item.price?.toInt() ?: 0}"
 
             // Image
             Glide.with(binding.root.context)

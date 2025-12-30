@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.client.smartpigclient.Cages.Api.FetchCageByIdRI
+import com.client.smartpigclient.Cages.Api.PigsCountRI
 import com.client.smartpigclient.Cages.CustomScannerActivity
 
 import com.client.smartpigclient.Cages.Model.CageModel
@@ -70,28 +71,47 @@ class CagesQrScannerFragment : Fragment() {
     }
 
     private fun fetchCageDetails(cageId: String) {
-        val api = FetchCageByIdRI.getInstance()
+        val cageApi = FetchCageByIdRI.getInstance()
+        val pigsCountApi = PigsCountRI.getInstance() // <-- adjust to your actual class name
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val cage: CageModel = api.fetchCageById(cageId) // single object now
+                // Fetch single cage
+                val cage: CageModel = cageApi.fetchCageById(cageId)
 
-                withContext(Dispatchers.Main) {
-                    if (cage != null) {
-                        binding.cageName.text = "Cage Name: ${cage.name}"
-                        binding.pigsCount.text = "Pigs: ${cage.pigCount}"
-                    } else {
-                        Toast.makeText(requireContext(), "Cage not found", Toast.LENGTH_SHORT).show()
+                // Fetch pigs count for this cage
+                try {
+                    val pigsCountResponse = pigsCountApi.pigsCount(cage.id)
+                    cage.pigCount = pigsCountResponse.pigsCount
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Error fetching pigs count: ${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
+
+                // Update UI
+                withContext(Dispatchers.Main) {
+                    binding.cageName.text = "Cage Name: ${cage.name}"
+                    binding.pigsCount.text = "Pigs: ${cage.pigCount}"
+                }
+
             } catch (e: Exception) {
                 e.printStackTrace()
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Error fetching cage", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Error fetching cage",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
     }
+
 
     override fun onResume() {
         super.onResume()

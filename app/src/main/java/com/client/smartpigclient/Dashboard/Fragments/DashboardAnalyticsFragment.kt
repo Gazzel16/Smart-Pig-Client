@@ -3,6 +3,7 @@ package com.client.smartpigclient.Dashboard.Fragments
 import android.R.attr.data
 import android.graphics.Color
 import android.os.Bundle
+import android.telecom.Call
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,10 +15,21 @@ import androidx.lifecycle.lifecycleScope
 import com.client.smartpigclient.Cages.Api.FetchCageRI
 import com.client.smartpigclient.Dashboard.Api.DashBoardApi
 import com.client.smartpigclient.Dashboard.Api.DashBoardRI
+import com.client.smartpigclient.Pigs.Api.GetPigsAnalyticsRI
+import com.client.smartpigclient.Pigs.Model.PigAnalyticsResponse
 
 import com.client.smartpigclient.R
 import com.client.smartpigclient.databinding.FragmentDashboardAnalyticsBinding
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.coroutines.launch
+import okhttp3.Response
+import java.time.LocalDate
+import java.util.Calendar
+import javax.security.auth.callback.Callback
 
 
 class DashboardAnalyticsFragment : Fragment() {
@@ -35,6 +47,7 @@ class DashboardAnalyticsFragment : Fragment() {
     ): View {
         _binding = FragmentDashboardAnalyticsBinding.inflate(inflater, container, false)
 
+        pigsAnalyticsSummary()
         pigsAndCagesChart()
         healthPigsAnalytics()
         return binding.root
@@ -204,6 +217,104 @@ class DashboardAnalyticsFragment : Fragment() {
             setFitBars(true)
             invalidate() // Refresh chart
         }
+    }
+
+    private fun pigsAnalyticsSummary() {
+        // Use lifecycleScope in Fragment
+        lifecycleScope.launch {
+            try {
+                val pigAnalyticsSummaryApi = GetPigsAnalyticsRI.getPigsAnalyticsSummaryApi()
+                val pigAnalyticsSummary = pigAnalyticsSummaryApi.getPigsAnalyticsSummary()  // suspend call
+
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH) + 1
+
+                val pigsAnalyticsSummaryByPeriodApi = GetPigsAnalyticsRI.getPigsAnalyticsSummaryByPeriodApi()
+                val pigsAnalyticsSummaryByPeriod = pigsAnalyticsSummaryByPeriodApi.getPigsAnalyticsSummaryByPeriod(year = year, month = month)
+
+                pigsAnalyticsSummaryByPeriodBarChart(pigsAnalyticsSummaryByPeriod)
+                pigsAnalyticsSummaryBarChart(pigAnalyticsSummary)  // populate the chart
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+    }
+
+    private fun pigsAnalyticsSummaryBarChart(analytics: PigAnalyticsResponse) {
+        val entries = ArrayList<BarEntry>()
+        entries.add(BarEntry(0f, analytics.soldPigs.toFloat()))
+        entries.add(BarEntry(1f, analytics.unsoldPigs.toFloat()))
+        entries.add(BarEntry(2f, analytics.totalEarnings.toFloat()))
+
+        val dataSet = BarDataSet(entries, "") // no label
+        dataSet.colors = listOf(
+            Color.parseColor("#4CAF50"), // Green
+            Color.parseColor("#D31305"), // Red
+            Color.parseColor("#2196F3")  // Blue
+        )
+
+
+        val barData = BarData(dataSet)
+        barData.barWidth = 0.9f
+
+        binding.totalEarningsChart.data = barData
+        binding.totalEarningsChart.setFitBars(true)
+        binding.totalEarningsChart.description.isEnabled = false
+
+        // Disable legend
+        binding.totalEarningsChart.legend.isEnabled = false
+
+        // Hide X-axis labels
+        binding.totalEarningsChart.xAxis.setDrawLabels(false)
+        binding.totalEarningsChart.xAxis.setDrawGridLines(false)
+        binding.totalEarningsChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+
+        // Optional: Hide Y-axis labels if you want a very minimal chart
+        binding.totalEarningsChart.axisRight.isEnabled = false
+        binding.totalEarningsChart.axisLeft.setDrawLabels(true) // keep Y-axis values if needed
+
+        binding.totalEarningsChart.animateY(1000)
+        binding.totalEarningsChart.invalidate()
+    }
+
+    private fun pigsAnalyticsSummaryByPeriodBarChart(analytics: PigAnalyticsResponse) {
+//        val entries = ArrayList<BarEntry>()
+//        entries.add(BarEntry(0f, analytics.soldPigs.toFloat()))
+//        entries.add(BarEntry(1f, analytics.unsoldPigs.toFloat()))
+//        entries.add(BarEntry(2f, analytics.totalEarnings.toFloat()))
+//
+//        val dataSet = BarDataSet(entries, "") // no label
+//        dataSet.colors = listOf(
+//            Color.parseColor("#4CAF50"), // Green
+//            Color.parseColor("#D31305"), // Red
+//            Color.parseColor("#2196F3")  // Blue
+//        )
+//
+//
+//        val barData = BarData(dataSet)
+//        barData.barWidth = 0.9f
+//
+//        binding.totalEarningsChart.data = barData
+//        binding.totalEarningsChart.setFitBars(true)
+//        binding.totalEarningsChart.description.isEnabled = false
+//
+//        // Disable legend
+//        binding.totalEarningsChart.legend.isEnabled = false
+//
+//        // Hide X-axis labels
+//        binding.totalEarningsChart.xAxis.setDrawLabels(false)
+//        binding.totalEarningsChart.xAxis.setDrawGridLines(false)
+//        binding.totalEarningsChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+//
+//        // Optional: Hide Y-axis labels if you want a very minimal chart
+//        binding.totalEarningsChart.axisRight.isEnabled = false
+//        binding.totalEarningsChart.axisLeft.setDrawLabels(true) // keep Y-axis values if needed
+//
+//        binding.totalEarningsChart.animateY(1000)
+//        binding.totalEarningsChart.invalidate()
     }
 
 

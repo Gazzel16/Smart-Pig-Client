@@ -168,11 +168,12 @@ class ScanPigFragment : Fragment() {
             try {
                 val pig: PigsModel = api.fetchPigsById(pigId)
 
-                currentPig = pig
-                binding.markAsSold.isEnabled = pig.isSold != true
-                binding.markAsSold.alpha = if (pig.isSold == true) 0.5f else 1f
-
                 withContext(Dispatchers.Main) {
+
+                    currentPig = pig
+                    binding.markAsSold.isEnabled = pig.isSold != true
+                    binding.markAsSold.alpha = if (pig.isSold == true) 0.5f else 1f
+
                     // Populate UI
                     binding.name.text = pig.name
                     binding.tvBreed.text = pig.breed ?: "N/A"

@@ -69,3 +69,9 @@ data class PigBuyerNameRequest(
 data class PigCountResponse (
     val pigsCount: Int
 )
+
+data class PigAnalyticsResponse (
+    val soldPigs: Int,
+    val unsoldPigs: Int,
+    val totalEarnings: Int
+)
