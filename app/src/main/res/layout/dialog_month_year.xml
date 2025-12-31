@@ -1,0 +1,27 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="20dp">
+
+    <AutoCompleteTextView
+        android:id="@+id/monthSpinner"
+        android:layout_weight="1"
+        android:padding="5dp"
+        android:layout_margin="5dp"
+        android:drawableEnd="@drawable/arrow_drop_down_ic"
+        android:background="@drawable/edittext_bg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <AutoCompleteTextView
+        android:id="@+id/yearSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/arrow_drop_down_ic"
+        android:background="@drawable/edittext_bg"
+        android:layout_weight="1"
+        android:layout_margin="5dp"
+        android:padding="5dp" />
+
+</LinearLayout>

@@ -1,6 +1,9 @@
 package com.client.smartpigclient.Dashboard.Fragments
 
 import android.R.attr.data
+import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.telecom.Call
@@ -10,6 +13,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.EditText
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.client.smartpigclient.Cages.Api.FetchCageRI
@@ -27,8 +33,10 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.coroutines.launch
 import okhttp3.Response
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.Calendar
+import java.util.Locale
 import javax.security.auth.callback.Callback
 
 
@@ -36,6 +44,10 @@ class DashboardAnalyticsFragment : Fragment() {
 
     private var _binding: FragmentDashboardAnalyticsBinding? = null
     private val binding get() = _binding!!  // Only use between onCreateView and onDestroyView
+
+    private var selectedYear: Int = 0
+    private var selectedMonth: Int = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +58,10 @@ class DashboardAnalyticsFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentDashboardAnalyticsBinding.inflate(inflater, container, false)
+
+        binding.yearAndMonth.setOnClickListener {
+            showMonthYearPicker()
+        }
 
         pigsAnalyticsSummary()
         pigsAndCagesChart()
@@ -280,44 +296,138 @@ class DashboardAnalyticsFragment : Fragment() {
         binding.totalEarningsChart.invalidate()
     }
 
-    private fun pigsAnalyticsSummaryByPeriodBarChart(analytics: PigAnalyticsResponse) {
-//        val entries = ArrayList<BarEntry>()
-//        entries.add(BarEntry(0f, analytics.soldPigs.toFloat()))
-//        entries.add(BarEntry(1f, analytics.unsoldPigs.toFloat()))
-//        entries.add(BarEntry(2f, analytics.totalEarnings.toFloat()))
-//
-//        val dataSet = BarDataSet(entries, "") // no label
-//        dataSet.colors = listOf(
-//            Color.parseColor("#4CAF50"), // Green
-//            Color.parseColor("#D31305"), // Red
-//            Color.parseColor("#2196F3")  // Blue
-//        )
-//
-//
-//        val barData = BarData(dataSet)
-//        barData.barWidth = 0.9f
-//
-//        binding.totalEarningsChart.data = barData
-//        binding.totalEarningsChart.setFitBars(true)
-//        binding.totalEarningsChart.description.isEnabled = false
-//
-//        // Disable legend
-//        binding.totalEarningsChart.legend.isEnabled = false
-//
-//        // Hide X-axis labels
-//        binding.totalEarningsChart.xAxis.setDrawLabels(false)
-//        binding.totalEarningsChart.xAxis.setDrawGridLines(false)
-//        binding.totalEarningsChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-//
-//        // Optional: Hide Y-axis labels if you want a very minimal chart
-//        binding.totalEarningsChart.axisRight.isEnabled = false
-//        binding.totalEarningsChart.axisLeft.setDrawLabels(true) // keep Y-axis values if needed
-//
-//        binding.totalEarningsChart.animateY(1000)
-//        binding.totalEarningsChart.invalidate()
+    private fun showMonthYearPicker() {
+        val dialogView = layoutInflater.inflate(
+            R.layout.dialog_month_year,
+            null
+        )
+
+        val monthInput = dialogView.findViewById<AutoCompleteTextView>(R.id.monthSpinner)
+        val yearInput = dialogView.findViewById<AutoCompleteTextView>(R.id.yearSpinner)
+
+        // 🔹 Months
+        val months = listOf(
+            "January", "February", "March", "April",
+            "May", "June", "July", "August",
+            "September", "October", "November", "December"
+        )
+
+        val monthAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            months
+        )
+        monthInput.setAdapter(monthAdapter)
+        monthInput.inputType = 0  // prevent keyboard from showing
+        monthInput.setOnClickListener { monthInput.showDropDown() }
+
+        // 🔹 Years (currentYear -5 to currentYear +5)
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        val years = (currentYear - 5..currentYear + 5).toList()
+
+        val yearAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            years
+        )
+        yearInput.setAdapter(yearAdapter)
+        yearInput.inputType = 0
+        yearInput.setOnClickListener { yearInput.showDropDown() }
+
+        // 🔹 Default selection
+        val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
+        monthInput.setText(months[currentMonth], false)
+        yearInput.setText(currentYear.toString(), false)
+
+        // 🔹 Dialog
+        AlertDialog.Builder(requireContext())
+            .setTitle("Select Month & Year")
+            .setView(dialogView)
+            .setPositiveButton("OK") { _, _ ->
+
+                val selectedMonthIndex = months.indexOf(monthInput.text.toString())
+                val selectedYearValue = yearInput.text.toString().toIntOrNull() ?: currentYear
+
+                selectedMonth = selectedMonthIndex + 1 // 1–12
+                selectedYear = selectedYearValue
+
+                // Display in main EditText
+                binding.yearAndMonth.setText("${months[selectedMonthIndex]} $selectedYear")
+
+                // Trigger API
+                fetchAnalyticsByPeriod()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
 
+
+    private fun fetchAnalyticsByPeriod() {
+
+        if (selectedYear == 0 || selectedMonth == 0) return
+
+        lifecycleScope.launch {
+            try {
+                val api = GetPigsAnalyticsRI
+                    .getPigsAnalyticsSummaryByPeriodApi()
+
+                val response = api.getPigsAnalyticsSummaryByPeriod(
+                    year = selectedYear,
+                    month = selectedMonth
+                )
+
+                pigsAnalyticsSummaryByPeriodBarChart(response)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to load analytics for selected month",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+    private fun pigsAnalyticsSummaryByPeriodBarChart(
+        analytics: PigAnalyticsResponse
+    ) {
+        val entries = arrayListOf(
+            BarEntry(0f, analytics.soldPigs.toFloat()),
+            BarEntry(1f, analytics.unsoldPigs.toFloat()),
+            BarEntry(2f, analytics.totalEarnings.toFloat())
+        )
+
+        val dataSet = BarDataSet(entries, "")
+        dataSet.colors = listOf(
+            Color.parseColor("#4CAF50"),
+            Color.parseColor("#D31305"),
+            Color.parseColor("#2196F3")
+        )
+        dataSet.valueTextColor = Color.BLACK
+
+        val barData = BarData(dataSet)
+        barData.barWidth = 0.9f
+
+        binding.perPeriodEarningsChart.apply {
+            data = barData
+            setFitBars(true)
+            description.isEnabled = false
+            legend.isEnabled = false
+
+            xAxis.apply {
+                setDrawLabels(false)
+                setDrawGridLines(false)
+                position = XAxis.XAxisPosition.BOTTOM
+            }
+
+            axisRight.isEnabled = false
+            axisLeft.axisMinimum = 0f
+
+            animateY(800)
+            invalidate()
+        }
+    }
 
     override fun onResume() {
         super.onResume()
