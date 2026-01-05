@@ -1,10 +1,8 @@
 package com.client.smartpigclient.Pigs.Api
 
-import com.client.smartpigclient.ApiConfig.ApiConfig
-import com.client.smartpigclient.Cages.Api.AddCageApi
+import com.client.smartpigclient.Config.ApiConfig
 import com.client.smartpigclient.Pigs.Model.PigAnalyticsResponse
 import com.client.smartpigclient.Pigs.Model.PigBuyerNameRequest
-import com.client.smartpigclient.Pigs.Model.PigCountResponse
 import com.client.smartpigclient.Pigs.Model.PigRequestModel
 import com.client.smartpigclient.Pigs.Model.PigsModel
 import okhttp3.MultipartBody
@@ -21,7 +19,6 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface AddPigsApi {
 

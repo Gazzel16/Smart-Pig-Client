@@ -1,6 +1,6 @@
 package com.client.smartpigclient.Cages.Api
 
-import com.client.smartpigclient.ApiConfig.ApiConfig
+import com.client.smartpigclient.Config.ApiConfig
 import com.client.smartpigclient.Cages.Model.CageModel
 import com.client.smartpigclient.Cages.Model.CageRequest
 import com.client.smartpigclient.Pigs.Model.PigCountResponse

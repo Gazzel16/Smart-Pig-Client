@@ -1,4 +1,4 @@
-package com.client.smartpigclient.ApiConfig
+package com.client.smartpigclient.Config
 
 object ApiConfig {
     // Put your PC's current IPv4 here

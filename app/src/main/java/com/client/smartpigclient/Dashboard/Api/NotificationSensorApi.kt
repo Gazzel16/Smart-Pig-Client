@@ -1,26 +1,27 @@
 package com.client.smartpigclient.Dashboard.Api
 
 import com.client.smartpigclient.Config.ApiConfig
-import com.client.smartpigclient.Dashboard.Model.ChatRequest
-import com.client.smartpigclient.Dashboard.Model.ChatResponse
-import com.client.smartpigclient.Pigs.Model.PigsModel
+import com.client.smartpigclient.Dashboard.Model.TriggerResponse
 import okhttp3.OkHttpClient
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.POST
 
-interface DashBoardApi {
-    @GET("api/pigs")
-    suspend fun fetchAllPigs(): List<PigsModel>
+interface TriggerSensorApi {
 
-    @POST("api/chat_bot")
-    suspend fun chatBotResponse(@Body request: ChatRequest): ChatResponse
-
+    @GET("/api/environment_alert_notif/trigger")
+    fun triggerSensor(): Call<TriggerResponse>
 }
 
-object DashBoardRI {
+interface ScheduleSensorApi {
+
+    @GET("/api/environment_alert_notif/schedule")
+    fun scheduleSensor(): Call<TriggerResponse>
+}
+
+object PushNotificationRI {
+
     private val BASE_URL: String by lazy {
         if (android.os.Build.FINGERPRINT.contains("generic") ||
             android.os.Build.FINGERPRINT.contains("emulator")
@@ -31,15 +32,22 @@ object DashBoardRI {
         }
     }
 
-
-    fun getInstance(): DashBoardApi {
+    private val retrofit: Retrofit by lazy {
         val client = OkHttpClient.Builder().build()
-
-        return Retrofit.Builder()
+        Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(DashBoardApi::class.java)
+    }
+
+
+    // For analytics API
+    fun triggerSensor(): TriggerSensorApi {
+        return retrofit.create(TriggerSensorApi::class.java)
+    }
+
+    fun scheduleSensor(): ScheduleSensorApi{
+        return retrofit.create(ScheduleSensorApi::class.java)
     }
 }

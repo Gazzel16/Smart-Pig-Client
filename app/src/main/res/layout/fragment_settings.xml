@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/backBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:textColor="@color/white"
+        android:padding="15dp"
+        android:textSize="20sp"
+        android:drawableStart="@drawable/back_ic"
+        android:drawableTint="@color/white"
+        android:background="@color/emeraldGreen"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="832dp"
+        android:orientation="vertical"
+        android:padding="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/backBtn">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_margin="3dp"
+            android:background="@drawable/edittext_bg"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ai Voice Alert"
+                android:drawableTint="@color/emeraldGreen"
+                android:drawableStart="@drawable/voice_ic2"
+                android:drawablePadding="8dp"
+                android:textStyle="italic"
+                android:textSize="18sp"/>
+
+            <Switch
+                android:id="@+id/aiVoiceSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+          />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/sensorWifi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:padding="12dp"
+            android:layout_margin="3dp"
+            android:textStyle="italic"
+            android:drawablePadding="8dp"
+            android:background="@drawable/edittext_bg"
+            android:drawableStart="@drawable/wifi_ic2"
+            android:drawableTint="@color/emeraldGreen"
+            android:text="Sensor Wifi" />
+
+        <TextView
+            android:id="@+id/appDemo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:padding="12dp"
+            android:layout_margin="3dp"
+            android:textStyle="italic"
+            android:drawablePadding="8dp"
+            android:background="@drawable/edittext_bg"
+            android:drawableStart="@drawable/instructions_ic1"
+            android:drawableTint="@color/emeraldGreen"
+            android:text="How to use this app?" />
+
+
+        <TextView
+            android:id="@+id/about"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:padding="12dp"
+            android:layout_margin="3dp"
+            android:textStyle="italic"
+            android:drawablePadding="8dp"
+            android:background="@drawable/edittext_bg"
+            android:drawableStart="@drawable/alert_ic"
+            android:drawableTint="@color/emeraldGreen"
+            android:text="About" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,12 +27,13 @@ class CagesAdapter(
     override fun onBindViewHolder(holder: CageViewHolder, position: Int) {
         val cage = cagesList[position]
         val binding = holder.binding
+        val unsoldPig = cage.pigs.count{it.isSold != true}
 
         // Set cage name
         binding.name.text = "${cage.name}"
 
         // Set pig count
-        binding.pigCount.text = "Pigs: ${cage.pigCount}"
+        binding.pigCount.text = "Pigs: $unsoldPig"
 
         // Convert QR URL to full URL if it's local
         val fullQrUrl = if (cage.qr_url?.startsWith("http") == true)
