@@ -81,8 +81,8 @@ class CagesQrScannerFragment : Fragment() {
 
                 // Fetch pigs count for this cage
                 try {
-                    val pigsCountResponse = pigsCountApi.pigsCount(cage.id)
-                    cage.pigCount = pigsCountResponse.pigsCount
+                    val unsoldPigCount = cage.pigs.count { it.isSold != true }
+                    cage.pigCount = unsoldPigCount
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(

@@ -142,13 +142,13 @@
                             android:inputType="text" />
 
                         <EditText
-                            android:id="@+id/age"
+                            android:id="@+id/weight"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="4dp"
                             android:background="@drawable/edittext_bg"
                             android:ems="10"
-                            android:hint="Age"
+                            android:hint="Weight"
                             android:inputType="number" />
 
                     </LinearLayout>
@@ -164,23 +164,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:textSize="17sp"
-                        android:text="Weight" />
-
-                    <EditText
-                        android:id="@+id/weight"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:background="@drawable/edittext_bg"
-                        android:ems="10"
-                        android:hint="Weight"
-                        android:inputType="number" />
 
                     <TextView
                         android:id="@+id/textView19"
@@ -248,23 +231,67 @@
 
 
                     <!-- Last Checkup -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:textSize="17sp"
-                        android:text="Birth Date" />
 
-                    <EditText
-                        android:id="@+id/birthDate"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:clickable="true"
-                        android:focusable="false"
-                        android:background="@drawable/edittext_bg"
-                        android:hint="YYYY-MM-DD"
-                        android:inputType="date" />
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="4dp"
+                                android:textSize="17sp"
+                                android:text="Birth Date" />
+
+                            <EditText
+                                android:id="@+id/birthDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="4dp"
+                                android:clickable="true"
+                                android:focusable="false"
+                                android:background="@drawable/edittext_bg"
+                                android:hint="YYYY-MM-DD"
+                                android:inputType="date" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="4dp"
+                                android:textSize="17sp"
+                                android:text="Age" />
+
+                            <EditText
+                                android:id="@+id/age"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="4dp"
+                                android:clickable="true"
+                                android:focusable="false"
+                                android:background="@drawable/edittext_bg"
+                                android:hint="Age"
+                                android:inputType="number" />
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
 
                     <TextView
                         android:layout_width="wrap_content"

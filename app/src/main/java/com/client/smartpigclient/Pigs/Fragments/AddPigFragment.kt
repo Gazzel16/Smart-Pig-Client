@@ -76,7 +76,17 @@ class AddPigFragment : Fragment() {
         }
 
         binding.birthDate.setOnClickListener {
-            showDatePicker { date -> binding.birthDate.setText(date) }
+            showDatePicker {
+                date -> binding.birthDate.setText(date)
+
+                println("Selected birthDate: $date")
+
+                val age = calculateAgeFromBirthDate(date)
+
+                println("Calculated age: $age")
+                binding.age.setText(age?.toString() ?: "")
+
+            }
         }
 
         binding.vaccineDate.setOnClickListener {
@@ -108,7 +118,7 @@ class AddPigFragment : Fragment() {
             "Transferred from Another Farm",
             "Gifted",
         )
-        val isAliveOptions = listOf("True", "False")  // or "Yes" / "No"
+        val isAliveOptions = listOf("Yes", "No")  // or "Yes" / "No"
         val healthOptions = listOf(
             "Healthy",
             "Sick",
@@ -178,10 +188,40 @@ class AddPigFragment : Fragment() {
         binding.illness.setAdapter(illnessAdapter)
         binding.vaccine.setAdapter(vaccineAdapter)
     }
+
+    private fun calculateAgeFromBirthDate(birthDate: String): Int? {
+        return try {
+            // Parse birthDate "yyyy-MM-dd"
+            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd")
+            val birth = sdf.parse(birthDate)
+
+            val today = java.util.Calendar.getInstance()
+            val dob = java.util.Calendar.getInstance()
+            dob.time = birth!!
+
+            var age = today.get(java.util.Calendar.YEAR) - dob.get(java.util.Calendar.YEAR)
+
+            // Compare month and day instead of DAY_OF_YEAR
+            val todayMonth = today.get(java.util.Calendar.MONTH)
+            val todayDay = today.get(java.util.Calendar.DAY_OF_MONTH)
+            val birthMonth = dob.get(java.util.Calendar.MONTH)
+            val birthDay = dob.get(java.util.Calendar.DAY_OF_MONTH)
+
+            if (todayMonth < birthMonth || (todayMonth == birthMonth && todayDay < birthDay)) {
+                age--
+            }
+
+            age
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+
     private fun addPig() {
         val name = binding.name.text.toString().toRequestBody()
         val breed = binding.breed.text.toString().toRequestBodyOptional()
-        val age = binding.age.text.toString().toRequestBodyOptional()
+//        val age = binding.age.text.toString().toRequestBodyOptional()
         val price = binding.price.text.toString().toRequestBodyOptional()
         val illness = binding.illness.text.toString().toRequestBodyOptional()
         val vaccine = binding.vaccine.text.toString().toRequestBodyOptional()
@@ -208,7 +248,7 @@ class AddPigFragment : Fragment() {
                 val response = api.addPigs(
                     name = name,
                     breed = breed,
-                    age = age,
+//                    age = age,
                     price = price,
                     illness = illness,
                     vaccine = vaccine,

@@ -13,8 +13,10 @@ import com.client.smartpigclient.Dashboard.Api.DashBoardApi
 import com.client.smartpigclient.Dashboard.Api.DashBoardRI
 
 import com.client.smartpigclient.MainActivity
+import com.client.smartpigclient.Pigs.Fragments.PigDetailsFragment
 import com.client.smartpigclient.Pigs.Fragments.ScanPigFragment
 import com.client.smartpigclient.Pigs.Model.PigsModel
+import com.client.smartpigclient.R
 import com.client.smartpigclient.databinding.FragmentDashBoardBinding
 import kotlinx.coroutines.launch
 
@@ -80,6 +82,14 @@ class DashBoardFragment : Fragment() {
         pigAdapter = DashBoardAdapter(pigsList) { pig ->
             // On item click
             // You can navigate to pig details here
+
+            val bundle = Bundle().apply {
+                putParcelable("selected_pig", pig)
+            }
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, DashboardPigDetailsFragment().apply { arguments = bundle })
+                .addToBackStack(null)
+                .commit()
         }
 
         binding.rvPigs.layoutManager = LinearLayoutManager(requireContext())
