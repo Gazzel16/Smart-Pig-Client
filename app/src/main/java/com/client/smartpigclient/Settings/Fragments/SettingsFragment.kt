@@ -1,10 +1,13 @@
 package com.client.smartpigclient.Settings.Fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.client.smartpigclient.AuthActivity
+import com.client.smartpigclient.MainActivity
 import com.client.smartpigclient.databinding.FragmentSettingsBinding
 
 private const val ARG_PARAM1 = "param1"
@@ -40,6 +43,17 @@ class SettingsFragment : Fragment() {
 
         // Example:
         // binding.btnSave.setOnClickListener { ... }
+
+        binding.logout.setOnClickListener {
+
+            val sharedPref = requireActivity()
+                .getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+            sharedPref.edit().clear().apply()
+
+            val intent = Intent(requireContext(), AuthActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        }
     }
 
     override fun onDestroyView() {
