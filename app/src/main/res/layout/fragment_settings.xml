@@ -99,5 +99,19 @@
             android:drawableStart="@drawable/alert_ic"
             android:drawableTint="@color/emeraldGreen"
             android:text="About" />
+
+        <TextView
+            android:id="@+id/logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:background="@drawable/edittext_bg"
+            android:drawableStart="@drawable/logout_ic"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/emeraldGreen"
+            android:padding="12dp"
+            android:text="Logout"
+            android:textSize="18sp"
+            android:textStyle="italic" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

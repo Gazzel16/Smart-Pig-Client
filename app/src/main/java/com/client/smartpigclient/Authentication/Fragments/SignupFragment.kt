@@ -34,7 +34,7 @@ class SignupFragment : Fragment() {
 
         binding.login.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, SignupFragment())
+                .replace(R.id.fragment_container, LoginFragment())
                 .addToBackStack(null)
                 .commit()
         }
@@ -49,10 +49,16 @@ class SignupFragment : Fragment() {
         val fullname = binding.etFullname.text.toString().trim()
         val email = binding.etEmail.text.toString().trim()
         val password = binding.etPassword.text.toString().trim()
+        val confirmPassword = binding.confirmPassword.text.toString().trim()
 
         // Basic validation
         if (fullname.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(requireContext(), "All fields are required", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (password != confirmPassword) {
+            Toast.makeText(requireContext(), "password must be the same", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -68,9 +74,19 @@ class SignupFragment : Fragment() {
 
                 Toast.makeText(
                     requireContext(),
-                    "Account created for ${response.email}",
+                    "Signup successfully",
                     Toast.LENGTH_LONG
                 ).show()
+
+                binding.etFullname.setText("")
+                binding.etEmail.setText("")
+                binding.etPassword.setText("")
+                binding.confirmPassword.setText("")
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, LoginFragment())
+                    .addToBackStack(null)
+                    .commit()
 
                 // TODO: Navigate to Login or Home
                 Log.d("SIGNUP", "User created: ${response.id}")
