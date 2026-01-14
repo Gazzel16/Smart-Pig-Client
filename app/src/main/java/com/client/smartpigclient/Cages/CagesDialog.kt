@@ -1,5 +1,6 @@
 package com.client.smartpigclient.Cages
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import com.client.smartpigclient.Cages.Api.AddCageRI
 import com.client.smartpigclient.Cages.Fragments.CagesFragment
 import com.client.smartpigclient.Cages.Model.CageModel
 import com.client.smartpigclient.Cages.Model.CageRequest
+import com.client.smartpigclient.Utils.TokenManager
 import com.client.smartpigclient.databinding.FragmentCagesDialogBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,7 +51,8 @@ class CagesDialog(private val listener: OnCageAddedListener) : DialogFragment() 
     }
 
     private fun addCage(name: String) {
-        val api = AddCageRI.getInstance()
+
+        val api = AddCageRI.getInstance(TokenManager.getToken(requireContext()))
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {

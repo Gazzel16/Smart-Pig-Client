@@ -13,6 +13,8 @@ import com.client.smartpigclient.Pigs.Api.FetchPigsByIdRI
 import com.client.smartpigclient.Pigs.Model.PigsModel
 import com.client.smartpigclient.R
 import com.client.smartpigclient.databinding.FragmentDashboardPigDetailsBinding
+import android.content.Context
+
 
 class DashboardPigDetailsFragment : Fragment() {
 
@@ -38,6 +40,8 @@ class DashboardPigDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val sharedPref = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val token = sharedPref.getString("auth_token", "") ?: ""
 
         val tint = ContextCompat.getColor(requireContext(), R.color.blueGreen)
         val noTint = ColorStateList.valueOf(Color.TRANSPARENT)

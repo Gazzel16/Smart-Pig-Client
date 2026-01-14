@@ -13,6 +13,7 @@ import com.client.smartpigclient.Dashboard.Api.DashBoardRI
 import com.client.smartpigclient.Dashboard.Model.ChatRequest
 import com.client.smartpigclient.databinding.FragmentDashboardChatBotBinding
 import com.client.smartpigclient.R
+import com.client.smartpigclient.Utils.TokenManager
 import kotlinx.coroutines.launch
 
 class DashboardChatBotFragment : Fragment() {
@@ -81,7 +82,7 @@ class DashboardChatBotFragment : Fragment() {
     private fun fetchBotResponse(userText: String) {
         lifecycleScope.launch {
             try {
-                val api = DashBoardRI.getInstance()
+                val api = DashBoardRI.getInstance(TokenManager.getToken(requireContext()))
 
                 // Correct API call
                 val response = api.chatBotResponse(

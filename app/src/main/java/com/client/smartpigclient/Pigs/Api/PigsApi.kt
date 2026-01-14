@@ -1,5 +1,6 @@
 package com.client.smartpigclient.Pigs.Api
 
+import android.content.Context
 import com.client.smartpigclient.Config.ApiConfig
 import com.client.smartpigclient.Pigs.Model.PigAnalyticsResponse
 import com.client.smartpigclient.Pigs.Model.PigBuyerNameRequest
@@ -126,8 +127,16 @@ object FetchPigsRI {
     }
 
 
-    fun getInstance(): FetchPigsApi {
-        val client = OkHttpClient.Builder().build()
+    fun getInstance(sharedPrefToken: String): FetchPigsApi {
+        val client = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .header("Authorization", "Bearer $sharedPrefToken") // attach token
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
+            .build()
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -150,8 +159,16 @@ object FetchPigsByIdRI {
     }
 
 
-    fun getInstance(): FetchPigsByIdApi {
-        val client = OkHttpClient.Builder().build()
+    fun getInstance(sharedPrefToken: String): FetchPigsByIdApi {
+        val client = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .header("Authorization", "Bearer $sharedPrefToken") // attach token
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
+            .build()
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -175,8 +192,16 @@ object AddPigsRI {
     }
 
 
-    fun getInstance(): AddPigsApi {
-        val client = OkHttpClient.Builder().build()
+    fun getInstance(sharedPrefToken: String): AddPigsApi {
+        val client = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .header("Authorization", "Bearer $sharedPrefToken") // attach token
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
+            .build()
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -199,8 +224,16 @@ object UpdatePigsRI {
     }
 
 
-    fun getInstance(): UpdatePigsApi {
-        val client = OkHttpClient.Builder().build()
+    fun getInstance(sharedPrefToken: String): UpdatePigsApi {
+        val client = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .header("Authorization", "Bearer $sharedPrefToken") // attach token
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
+            .build()
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -222,8 +255,16 @@ object PigBuyerNameRI {
         }
     }
 
-    fun getInstance(): PigBuyerNameApi {
-        val client = OkHttpClient.Builder().build()
+    fun getInstance(sharedPrefToken: String): PigBuyerNameApi {
+        val client = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .header("Authorization", "Bearer $sharedPrefToken") // attach token
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
+            .build()
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -246,22 +287,29 @@ object GetPigsAnalyticsRI {
         }
     }
 
-    private val retrofit: Retrofit by lazy {
-        val client = OkHttpClient.Builder().build()
-        Retrofit.Builder()
+    fun getPigsAnalyticsRetrofit(token: String): Retrofit {
+        val client = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .header("Authorization", "Bearer $token")
+                chain.proceed(requestBuilder.build())
+            }
+            .build()
+
+        return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
-
     // For analytics API
-    fun getPigsAnalyticsSummaryApi(): GetPigsAnalyticsSummaryApi {
-        return retrofit.create(GetPigsAnalyticsSummaryApi::class.java)
+    fun getPigsAnalyticsSummaryApi(token: String): GetPigsAnalyticsSummaryApi {
+        return  getPigsAnalyticsRetrofit(token).create(GetPigsAnalyticsSummaryApi::class.java)
     }
 
-    fun getPigsAnalyticsSummaryByPeriodApi(): GetPigsAnalyticsSummaryByPeriodApi{
-        return retrofit.create(GetPigsAnalyticsSummaryByPeriodApi::class.java)
+    fun getPigsAnalyticsSummaryByPeriodApi(token: String): GetPigsAnalyticsSummaryByPeriodApi{
+        return  getPigsAnalyticsRetrofit(token).create(GetPigsAnalyticsSummaryByPeriodApi::class.java)
     }
 }

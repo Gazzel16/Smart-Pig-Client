@@ -18,6 +18,7 @@ import com.client.smartpigclient.MainActivity
 import com.client.smartpigclient.Pigs.Api.AddPigsRI
 import com.client.smartpigclient.Pigs.Model.PigRequestModel
 import com.client.smartpigclient.R
+import com.client.smartpigclient.Utils.TokenManager
 import com.client.smartpigclient.databinding.FragmentAddPigBinding
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -241,7 +242,7 @@ class AddPigFragment : Fragment() {
             MultipartBody.Part.createFormData("image", file.name, reqFile)
         }
 
-        val api = AddPigsRI.getInstance()
+        val api = AddPigsRI.getInstance(TokenManager.getToken(requireContext()))
         val cageIdBody = cageId?.toRequestBodyOptional()
         lifecycleScope.launch {
             try {

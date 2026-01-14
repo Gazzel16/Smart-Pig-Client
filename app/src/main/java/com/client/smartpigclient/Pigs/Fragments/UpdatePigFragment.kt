@@ -15,6 +15,7 @@ import com.client.smartpigclient.Pigs.Api.UpdatePigsRI
 import com.client.smartpigclient.Pigs.Model.PigsModel
 import com.client.smartpigclient.Pigs.Model.PigRequestModel
 import com.client.smartpigclient.R
+import com.client.smartpigclient.Utils.TokenManager
 import com.client.smartpigclient.databinding.FragmentUpdatePigBinding
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -112,7 +113,7 @@ class UpdatePigFragment() : Fragment() {
     }
 
     private fun updatePig() {
-        val api = UpdatePigsRI.getInstance()
+        val api = UpdatePigsRI.getInstance(TokenManager.getToken(requireContext()))
 
         val name = binding.name.text.toString().toRequestBody()
         val breed = binding.breed.text.toString().toRequestBodyOptional()

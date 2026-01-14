@@ -1,5 +1,6 @@
 package com.client.smartpigclient.Cages.Api
 
+import android.R
 import com.client.smartpigclient.Config.ApiConfig
 import com.client.smartpigclient.Cages.Model.CageModel
 import com.client.smartpigclient.Cages.Model.CageRequest
@@ -47,8 +48,16 @@ object AddCageRI {
     }
 
 
-    fun getInstance(): AddCageApi {
-        val client = OkHttpClient.Builder().build()
+    fun getInstance(sharedPrefToken: String): AddCageApi {
+        val client = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .header("Authorization", "Bearer $sharedPrefToken") // attach token
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
+            .build()
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -71,8 +80,16 @@ object FetchCageRI {
     }
 
 
-    fun getInstance(): FetchCageApi {
-        val client = OkHttpClient.Builder().build()
+    fun getInstance(sharedPrefToken: String): FetchCageApi {
+        val client = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .header("Authorization", "Bearer $sharedPrefToken") // attach token
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
+            .build()
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -95,8 +112,16 @@ object FetchCageByIdRI {
     }
 
 
-    fun getInstance(): FetchCageByIdApi {
-        val client = OkHttpClient.Builder().build()
+    fun getInstance(sharedPrefToken: String): FetchCageByIdApi {
+        val client = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .header("Authorization", "Bearer $sharedPrefToken") // attach token
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
+            .build()
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -119,8 +144,17 @@ object PigsCountRI {
     }
 
 
-    fun getInstance(): PigsCountApi {
-        val client = OkHttpClient.Builder().build()
+    fun getInstance(sharedPrefToken: String): PigsCountApi {
+        val client = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .header("Authorization", "Bearer $sharedPrefToken") // attach token
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
+            .build()
+
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
