@@ -150,24 +150,9 @@ class DashboardSensorFragment : Fragment() {
 
                 // Temperature description
                 if (temp != null) {
-                    // Cold
-                    if (temp < 20) {
-                        binding.tempDescription.text = "Too cold for pigs. Provide heating or bedding."
-                    }
-                    // Comfortable
-                    else if (temp >= 20 && temp < 25) {
-                        binding.tempDescription.text = "Cool environment. Pigs are comfortable."
-                    }
-                    // Warm
-                    else if (temp >= 25 && temp < 30) {
-                        binding.tempDescription.text = "Warm environment. Monitor pigs for slight heat stress."
-                    }
-                    // Hot
-                    else if (temp >= 30 && temp < 35) {
-                        binding.tempDescription.text = "Hot environment! Provide shade and water."
-                    }
+
                     // Very hot
-                    else if (temp >= 35 && temp < 40) {
+                    if (temp >= 35 && temp < 40) {
                         binding.tempDescription.text = "Very hot! Pigs may reduce feed intake and pant."
                     }
                     // Extreme heat
@@ -182,24 +167,8 @@ class DashboardSensorFragment : Fragment() {
 
                 // Humidity description
                 if (humid != null) {
-                    // Too dry
-                    if (humid < 50) {
-                        binding.humidDescription.text = "Air is too dry. Provide water and ventilation."
-                    }
-                    // Comfortable
-                    else if (humid >= 50 && humid <= 70) {
-                        binding.humidDescription.text = "Humidity is comfortable for pigs."
-                    }
-                    // Slightly high
-                    else if (humid >= 71 && humid <= 80) {
-                        binding.humidDescription.text = "Slightly high humidity. Monitor pigs."
-                    }
-                    // High
-                    else if (humid >= 81 && humid <= 90) {
-                        binding.humidDescription.text = "High humidity! Pigs may feel uncomfortable."
-                    }
                     // Extreme
-                    else if (humid > 90) {
+                    if (humid > 90) {
                         binding.humidDescription.text = "Extreme humidity! Increase ventilation and keep pigs cool."
                     }
                     // Out of range

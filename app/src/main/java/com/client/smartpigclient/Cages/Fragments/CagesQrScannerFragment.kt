@@ -1,5 +1,6 @@
 package com.client.smartpigclient.Cages.Fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -71,8 +72,12 @@ class CagesQrScannerFragment : Fragment() {
     }
 
     private fun fetchCageDetails(cageId: String) {
-        val cageApi = FetchCageByIdRI.getInstance()
-        val pigsCountApi = PigsCountRI.getInstance() // <-- adjust to your actual class name
+        val sharedPref = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val token = sharedPref.getString("auth_token", "") ?: ""
+
+
+        val cageApi = FetchCageByIdRI.getInstance(token)
+//        val pigsCountApi = PigsCountRI.getInstance() // <-- adjust to your actual class name
 
         CoroutineScope(Dispatchers.IO).launch {
             try {

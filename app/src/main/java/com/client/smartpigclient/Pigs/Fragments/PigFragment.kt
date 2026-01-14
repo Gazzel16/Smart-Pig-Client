@@ -13,6 +13,7 @@ import com.client.smartpigclient.Pigs.Adapter.PigsAdapter
 import com.client.smartpigclient.Pigs.Model.PigsModel
 import com.client.smartpigclient.Pigs.Api.FetchPigsRI
 import com.client.smartpigclient.R
+import com.client.smartpigclient.Utils.TokenManager
 import com.client.smartpigclient.databinding.FragmentPigBinding
 import kotlinx.coroutines.launch
 
@@ -69,7 +70,7 @@ class PigFragment : Fragment() {
     }
 
     private fun fetchPigs() {
-        val api = FetchPigsRI.getInstance()
+        val api = FetchPigsRI.getInstance(TokenManager.getToken(requireContext()))
 
         lifecycleScope.launch {
             try {

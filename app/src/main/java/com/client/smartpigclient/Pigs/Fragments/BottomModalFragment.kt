@@ -11,6 +11,7 @@ import com.client.smartpigclient.Pigs.Api.PigBuyerNameRI
 import com.client.smartpigclient.Pigs.Api.UpdatePigsRI
 import com.client.smartpigclient.Pigs.Model.PigBuyerNameRequest
 import com.client.smartpigclient.Pigs.Model.PigsModel
+import com.client.smartpigclient.Utils.TokenManager
 import com.client.smartpigclient.databinding.FragmentBottomModalBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.Dispatchers
@@ -77,7 +78,7 @@ class BottomModalFragment(
     ): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                val api = PigBuyerNameRI.getInstance() // PATCH endpoint
+                val api = PigBuyerNameRI.getInstance(TokenManager.getToken(requireContext())) // PATCH endpoint
                 val response = api.pigBuyerName(
                     pig.id,
                     PigBuyerNameRequest(buyerName = buyerName, isSold = isSold) // include isSold

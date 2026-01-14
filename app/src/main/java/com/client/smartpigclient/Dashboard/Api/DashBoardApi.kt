@@ -32,8 +32,16 @@ object DashBoardRI {
     }
 
 
-    fun getInstance(): DashBoardApi {
-        val client = OkHttpClient.Builder().build()
+    fun getInstance(sharedPrefToken: String): DashBoardApi {
+        val client = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .header("Authorization", "Bearer $sharedPrefToken") // attach token
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
+            .build()
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)

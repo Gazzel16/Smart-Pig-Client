@@ -3,6 +3,7 @@ package com.client.smartpigclient.Dashboard.Fragments
 import android.R.attr.data
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
@@ -25,6 +26,7 @@ import com.client.smartpigclient.Pigs.Api.GetPigsAnalyticsRI
 import com.client.smartpigclient.Pigs.Model.PigAnalyticsResponse
 
 import com.client.smartpigclient.R
+import com.client.smartpigclient.Utils.TokenManager
 import com.client.smartpigclient.databinding.FragmentDashboardAnalyticsBinding
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -70,8 +72,13 @@ class DashboardAnalyticsFragment : Fragment() {
     }
 
     private fun pigsAndCagesChart() {
-        val apiPigs = DashBoardRI.getInstance()
-        val apiCage = FetchCageRI.getInstance() // assuming this returns a list of cages
+
+        val sharedPref = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val token = sharedPref.getString("auth_token", "") ?: ""
+
+
+        val apiPigs = DashBoardRI.getInstance(token)
+        val apiCage = FetchCageRI.getInstance(token) // assuming this returns a list of cages
 
         lifecycleScope.launch {
             try {
@@ -156,7 +163,11 @@ class DashboardAnalyticsFragment : Fragment() {
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.typeDropdown.adapter = typeAdapter
 
-        val api = DashBoardRI.getInstance()
+        val sharedPref = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val token = sharedPref.getString("auth_token", "") ?: ""
+
+
+        val api = DashBoardRI.getInstance(TokenManager.getToken(requireContext()))
         lifecycleScope.launch {
             val allPigs = try {
                 api.fetchAllPigs()
@@ -239,14 +250,14 @@ class DashboardAnalyticsFragment : Fragment() {
         // Use lifecycleScope in Fragment
         lifecycleScope.launch {
             try {
-                val pigAnalyticsSummaryApi = GetPigsAnalyticsRI.getPigsAnalyticsSummaryApi()
+                val pigAnalyticsSummaryApi = GetPigsAnalyticsRI.getPigsAnalyticsSummaryApi(TokenManager.getToken(requireContext()))
                 val pigAnalyticsSummary = pigAnalyticsSummaryApi.getPigsAnalyticsSummary()  // suspend call
 
                 val calendar = Calendar.getInstance()
                 val year = calendar.get(Calendar.YEAR)
                 val month = calendar.get(Calendar.MONTH) + 1
 
-                val pigsAnalyticsSummaryByPeriodApi = GetPigsAnalyticsRI.getPigsAnalyticsSummaryByPeriodApi()
+                val pigsAnalyticsSummaryByPeriodApi = GetPigsAnalyticsRI.getPigsAnalyticsSummaryByPeriodApi(TokenManager.getToken(requireContext()))
                 val pigsAnalyticsSummaryByPeriod = pigsAnalyticsSummaryByPeriodApi.getPigsAnalyticsSummaryByPeriod(year = year, month = month)
 
                 pigsAnalyticsSummaryByPeriodBarChart(pigsAnalyticsSummaryByPeriod)
@@ -370,7 +381,7 @@ class DashboardAnalyticsFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val api = GetPigsAnalyticsRI
-                    .getPigsAnalyticsSummaryByPeriodApi()
+                    .getPigsAnalyticsSummaryByPeriodApi(TokenManager.getToken(requireContext()))
 
                 val response = api.getPigsAnalyticsSummaryByPeriod(
                     year = selectedYear,

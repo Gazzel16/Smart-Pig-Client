@@ -1,5 +1,6 @@
 package com.client.smartpigclient.Cages.Fragments
 
+import android.content.Context
 import com.client.smartpigclient.R
 
 import android.os.Bundle
@@ -20,6 +21,7 @@ import com.client.smartpigclient.Cages.CagesDialog
 import com.client.smartpigclient.Dashboard.Fragments.DashBoardFragment
 import com.client.smartpigclient.MainActivity
 import com.client.smartpigclient.Pigs.Fragments.PigFragment
+import com.client.smartpigclient.Utils.TokenManager
 import com.client.smartpigclient.databinding.FragmentCagesBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -91,8 +93,10 @@ class CagesFragment : Fragment() {
     }
 
     private fun fetchCages() {
-        val api = FetchCageRI.getInstance()
-        val pigsCountRI = PigsCountRI.getInstance()
+
+
+        val api = FetchCageRI.getInstance(TokenManager.getToken(requireContext()))
+        val pigsCountRI = PigsCountRI.getInstance(TokenManager.getToken(requireContext()))
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {

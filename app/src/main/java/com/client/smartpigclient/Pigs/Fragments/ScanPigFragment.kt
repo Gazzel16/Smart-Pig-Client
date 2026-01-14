@@ -17,6 +17,7 @@ import com.client.smartpigclient.Pigs.Model.PigsModel
 import com.client.smartpigclient.R
 import com.client.smartpigclient.databinding.FragmentScanPigBinding
 import com.client.smartpigclient.Cages.CustomScannerActivity
+import com.client.smartpigclient.Utils.TokenManager
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -162,7 +163,7 @@ class ScanPigFragment : Fragment() {
     }
 
     private fun fetchPigDetails(pigId: String) {
-        val api = FetchPigsByIdRI.getInstance()
+        val api = FetchPigsByIdRI.getInstance(TokenManager.getToken(requireContext()))
 
         CoroutineScope(Dispatchers.IO).launch {
             try {

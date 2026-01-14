@@ -19,6 +19,9 @@ import com.client.smartpigclient.Pigs.Model.PigsModel
 import com.client.smartpigclient.R
 import com.client.smartpigclient.databinding.FragmentDashBoardBinding
 import kotlinx.coroutines.launch
+import android.content.Context
+import com.client.smartpigclient.Utils.TokenManager
+
 
 class DashBoardFragment : Fragment() {
 
@@ -99,7 +102,7 @@ class DashBoardFragment : Fragment() {
     private fun fetchPigs() {
         lifecycleScope.launch {
             try {
-                val api = DashBoardRI.getInstance()
+                val api = DashBoardRI.getInstance(TokenManager.getToken(requireContext()))
                 val response = api.fetchAllPigs()
 
                 pigsList.clear()
