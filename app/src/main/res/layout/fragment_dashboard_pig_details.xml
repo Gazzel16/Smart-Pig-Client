@@ -87,7 +87,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/agentProfession"
+                    android:id="@+id/birthDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
@@ -214,6 +214,30 @@
                                 android:textSize="16sp" />
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:orientation="horizontal"
+                            android:padding="8dp">
+
+                            <TextView
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="8dp"
+                                android:text="Pig Type:"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvPigType"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Pig Type"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
                         <!-- Gender -->
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -269,6 +293,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="4dp"
+                            android:visibility="gone"
                             android:orientation="horizontal"
                             android:padding="8dp">
 
@@ -371,6 +396,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
+                        android:layout_margin="8dp"
                         android:background="@drawable/bg_tab_section"
                         android:elevation="4dp"
                         android:orientation="vertical"
@@ -380,6 +406,29 @@
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:orientation="horizontal"
+                            android:padding="8dp">
+
+                            <TextView
+                                android:layout_width="90dp"
+                                android:layout_height="wrap_content"
+                                android:text="Feed: "
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvFeed"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="None"
+                                android:textSize="16sp" />
+                        </LinearLayout>
 
                         <!-- Illness -->
                         <LinearLayout
@@ -558,6 +607,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
+                        android:layout_margin="8dp"
                         android:background="@drawable/bg_tab_section"
                         android:elevation="4dp"
                         android:orientation="vertical"

@@ -14,6 +14,8 @@ import com.client.smartpigclient.Pigs.Model.PigsModel
 import com.client.smartpigclient.R
 import com.client.smartpigclient.databinding.FragmentDashboardPigDetailsBinding
 import android.content.Context
+import com.client.smartpigclient.Utils.formatDate
+import com.client.smartpigclient.Utils.formatDateWithoutHours
 
 
 class DashboardPigDetailsFragment : Fragment() {
@@ -108,7 +110,7 @@ class DashboardPigDetailsFragment : Fragment() {
         pig?.let { pig ->
             // Header
             binding.name.text = pig.name
-            binding.agentProfession.text = pig.birthDate ?: "N/A" // You can change this field
+            binding.birthDate.text = formatDateWithoutHours(pig.birthDate) ?: "N/A" // You can change this field
 
             // Overview Tab
             binding.tvBreed.text = pig.breed ?: "N/A"
@@ -122,16 +124,19 @@ class DashboardPigDetailsFragment : Fragment() {
             // Health Tab
             binding.tvIllness.text = pig.illness ?: "N/A"
             binding.tvVaccine.text = pig.vaccine ?: "N/A"
-            binding.tvVaccineDate.text = pig.vaccineDate ?: "N/A"
-            binding.tvVaccineNextDue.text = pig.vaccineNextDue ?: "N/A"
+            binding.tvVaccineDate.text = formatDateWithoutHours(pig.vaccineDate)
+            binding.tvVaccineNextDue.text = formatDateWithoutHours(pig.vaccineNextDue)
             binding.tvHealthStatus.text = pig.healthStatus ?: "N/A"
-            binding.tvLastCheckup.text = pig.lastCheckup ?: "N/A"
+            binding.tvLastCheckup.text = formatDateWithoutHours(pig.lastCheckup )
             binding.tvIsAlive.text = if (pig.isAlive == true) "Yes" else "No"
 
             // Market/Sales Tab
             binding.tvPrice.text = pig.price?.let { "₱$it" } ?: "N/A"
             binding.tvIsSold.text = if (pig.isSold == true) "Yes" else "No"
             binding.tvBuyerName.text = pig.buyerName ?: "N/A"
+
+            binding.tvPigType.text = pig.pigType ?: "N/A"
+            binding.tvFeed.text = pig.feed ?: "N/A"
 
             pig.image_url?.let { url ->
                 val fullUrl = if (url.startsWith("http")) url else "${FetchPigsByIdRI.BASE_URL}$url"

@@ -64,6 +64,7 @@
             android:textSize="18sp"
             android:padding="12dp"
             android:layout_margin="3dp"
+            android:visibility="gone"
             android:textStyle="italic"
             android:drawablePadding="8dp"
             android:background="@drawable/edittext_bg"

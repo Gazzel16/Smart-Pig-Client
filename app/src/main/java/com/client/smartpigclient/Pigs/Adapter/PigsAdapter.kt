@@ -18,6 +18,7 @@ import com.client.smartpigclient.databinding.ItemPigBinding
 
 class PigsAdapter(
     private val pigsList: List<PigsModel>,
+    private val onItemClick: (PigsModel) -> Unit,
     private val fragmentManager: FragmentManager
 ) : RecyclerView.Adapter<PigsAdapter.PigViewHolder>() {
 
@@ -83,11 +84,14 @@ class PigsAdapter(
 
         // Show all details click
         binding.editDetails.setOnClickListener {
-            val fragment = UpdatePigFragment.newInstance(pig)
+            val fragment = UpdatePigFragment.newInstance(pig, pig.cageId ?: "N/A")
             fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)
                 .commit()
+        }
+        binding.root.setOnClickListener {
+            onItemClick(pig) // trigger click callback
         }
     }
 

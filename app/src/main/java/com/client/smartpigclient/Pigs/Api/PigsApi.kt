@@ -28,6 +28,7 @@ interface AddPigsApi {
     suspend fun addPigs(
         @Part("name") name: RequestBody,
         @Part("breed") breed: RequestBody? = null,
+        @Part("pigType") pigType: RequestBody? = null,
         @Part("age") age: RequestBody? = null,
         @Part("price") price: RequestBody? = null,
         @Part("illness") illness: RequestBody? = null,
@@ -48,6 +49,7 @@ interface AddPigsApi {
         @Part("status") status: RequestBody? = null,
         @Part("birthDate") birthDate: RequestBody? = null,
         @Part("weight") weight: RequestBody? = null,
+        @Part("feed") feed: RequestBody? = null,
         @Part image: MultipartBody.Part?
     ): Response<PigRequestModel>
 }
@@ -60,6 +62,7 @@ interface UpdatePigsApi {
         @Path("pig_id") pigId: String,  // <- Path parameter
         @Part("name") name: RequestBody,
         @Part("breed") breed: RequestBody? = null,
+        @Part("pigType") pigType: RequestBody? = null,
         @Part("age") age: RequestBody? = null,
         @Part("price") price: RequestBody? = null,
         @Part("illness") illness: RequestBody? = null,
@@ -77,6 +80,7 @@ interface UpdatePigsApi {
         @Part("status") status: RequestBody? = null,
         @Part("birthDate") birthDate: RequestBody? = null,
         @Part("weight") weight: RequestBody? = null,
+        @Part("feed") feed: RequestBody? = null,
         @Part image: MultipartBody.Part? = null
     ): Response<PigRequestModel>
 }

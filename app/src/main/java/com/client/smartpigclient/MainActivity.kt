@@ -15,8 +15,10 @@ import com.client.smartpigclient.Cages.Fragments.CagesFragment
 import com.client.smartpigclient.Config.FcmTokenConfig
 import com.client.smartpigclient.Dashboard.Api.PushNotificationRI
 import com.client.smartpigclient.Dashboard.Fragments.DashBoardFragment
+import com.client.smartpigclient.Dashboard.Fragments.DashboardFeedingScheduleFragment
 import com.client.smartpigclient.Dashboard.Model.TriggerResponse
 import com.client.smartpigclient.Pigs.Fragments.PigFragment
+import com.client.smartpigclient.Pigs.Model.PigFeedingSchedule
 import com.client.smartpigclient.Settings.Fragments.SettingsFragment
 import com.client.smartpigclient.databinding.ActivityMainBinding
 import com.github.mikephil.charting.data.Entry
@@ -70,6 +72,10 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(SettingsFragment())
                     true
                 }
+                R.id.nav_time -> {
+                    replaceFragment(DashboardFeedingScheduleFragment())
+                    true
+                }
                 else -> false
             }
         }
@@ -84,7 +90,7 @@ class MainActivity : AppCompatActivity() {
                     tempHumidDescription()
 
                 // 🔊 DEBUG TEST (you SHOULD hear this)
-                tts.speak("Voice system initialized", TextToSpeech.QUEUE_FLUSH, null, null)
+//                tts.speak("Voice system initialized", TextToSpeech.QUEUE_FLUSH, null, null)
             }
         }
 
@@ -114,15 +120,15 @@ class MainActivity : AppCompatActivity() {
                     val humidity = humid.toInt()
 
                     if (temperature != lastTemperature || humidity != lastHumidity){
-                        val tempMsg = when {
-                            temp < 33 -> "The current temperature is ${temperature}°C. Hot environment. Increase airflow, provide shade, and watch for signs of heat stress."
-                            else -> "The current temperature is ${temperature}°C. Extreme heat! Immediate cooling is required—use misting, fans, and limit pig activity."
-                        }
+                        val tempMsg =
+                            if (temp > 33)
+                                "The current temperature is ${temperature}°C. Hot environment. Increase airflow, provide shade, and watch for signs of heat stress."
+                            else null
 
-                        val humidMsg = when {
-                            humid <= 90 -> "The current humidity is ${humidity}% High humidity detected. Increase airflow and keep bedding dry to avoid disease risk."
-                            else -> "Extreme humidity. Urgent action needed—maximize ventilation and reduce moisture sources."
-                        }
+                        val humidMsg =
+                            if (humid >= 90)
+                                "The current humidity is ${humidity}%. High humidity detected. Increase airflow and keep bedding dry to avoid disease risk."
+                            else null
 
                         val finalMsg = "$tempMsg $humidMsg"
 

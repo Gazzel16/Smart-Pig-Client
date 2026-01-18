@@ -32,5 +32,6 @@
         android:layout_marginLeft="8dp"
         android:backgroundTint="@color/blueGreen"
         android:layout_marginRight="8dp"
+        android:textColor="@color/white"
         android:text="Mark as Sold" />
 </LinearLayout>

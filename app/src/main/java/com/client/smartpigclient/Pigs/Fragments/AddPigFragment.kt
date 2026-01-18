@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.client.smartpigclient.MainActivity
 import com.client.smartpigclient.Pigs.Api.AddPigsRI
 import com.client.smartpigclient.Pigs.Model.PigRequestModel
 import com.client.smartpigclient.R
+import com.client.smartpigclient.Utils.OtherInputDialog
 import com.client.smartpigclient.Utils.TokenManager
 import com.client.smartpigclient.databinding.FragmentAddPigBinding
 import kotlinx.coroutines.launch
@@ -25,6 +27,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import com.client.smartpigclient.Utils.PigConstants
+
 
 class AddPigFragment : Fragment() {
 
@@ -102,6 +106,65 @@ class AddPigFragment : Fragment() {
             showDatePicker { date -> binding.lastCheckup.setText(date) }
         }
 
+        binding.feed.setOnItemClickListener { parent, view, position, id ->
+            val selectedFeed = PigConstants.PIG_FEEDS[position]
+            binding.feed.setText(selectedFeed, false) // important: false prevents filtering again
+
+            if (selectedFeed == "Other") {
+                OtherInputDialog.show(
+                    context = requireContext(),
+                    title = "Other Feed",
+                    hint = "Enter feed name",
+                    targetView = binding.feed
+                )
+            }
+        }
+
+
+        binding.illness.setOnItemClickListener { _, _, position, _ ->
+            val selectedIllness = PigConstants.ILLNESS_OPTIONS[position]
+            binding.illness.setText(selectedIllness, false)
+
+            if (selectedIllness == "Other") {
+                OtherInputDialog.show(
+                    context = requireContext(),
+                    title = "Other Illness",
+                    hint = "Enter Illness name",
+                    targetView = binding.illness
+                )
+            }
+        }
+
+        binding.vaccine.setOnItemClickListener { _, _, position, _ ->
+            val selectedVaccine = PigConstants.VACCINE_OPTIONS[position]
+            binding.vaccine.setText(selectedVaccine, false)
+
+            if (selectedVaccine == "Other") {
+                OtherInputDialog.show(
+                    context = requireContext(),
+                    title = "Other Vaccine",
+                    hint = "Enter Vaccine name",
+                    targetView = binding.vaccine
+                )
+            }
+        }
+
+        binding.pigType.setOnItemClickListener { _, _, position, _ ->
+            val selectedPigType = PigConstants.PIG_TYPE[position]
+            binding.vaccine.setText(selectedPigType, false)
+
+            if (selectedPigType == "Other") {
+                OtherInputDialog.show(
+                    context = requireContext(),
+                    title = "Other Vaccine",
+                    hint = "Enter Vaccine name",
+                    targetView = binding.vaccine
+                )
+            }
+        }
+
+
+
         dropDownDetails()
     }
 
@@ -110,75 +173,52 @@ class AddPigFragment : Fragment() {
     }
 
     private fun dropDownDetails(){
-
-        //LIST
-        val genderOptions = listOf("Male", "Female")
-        val originOptions = listOf(
-            "Born on Farm",
-            "Purchased from Market",
-            "Transferred from Another Farm",
-            "Gifted",
-        )
-        val isAliveOptions = listOf("Yes", "No")  // or "Yes" / "No"
-        val healthOptions = listOf(
-            "Healthy",
-            "Sick",
-            "Injured",
-            "Recovering",
-            "Needs Checkup",
-            "Vaccinated"
-        )
-        val illnessOptions = listOf(
-            "None",
-            "Swine Flu",
-            "Foot and Mouth Disease",
-            "Skin Infection",
-            "Respiratory Infection",
-            "Other"
-        )
-        val vaccineOptions = listOf(
-            "None",
-            "Swine Fever Vaccine",
-            "Foot and Mouth Disease Vaccine",
-            "PRRS Vaccine",
-            "Classical Swine Fever Vaccine",
-            "Other"
-        )
-
         //ADAPTER LIST
         val vaccineAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
-            vaccineOptions
+            PigConstants.VACCINE_OPTIONS
         )
 
         val illnessAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
-            illnessOptions
+            PigConstants.ILLNESS_OPTIONS
         )
 
         val healthAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
-            healthOptions
+            PigConstants.HEALTH_OPTIONS
         )
 
         val isAliveAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
-            isAliveOptions
+            PigConstants.IS_ALIVE_OPTIONS
         )
 
         val originAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
-            originOptions
+            PigConstants.ORIGIN_OPTIONS
         )
         val adapterGender = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
-            genderOptions
+            PigConstants.GENDER_OPTIONS
+        )
+
+        val adapterFeed = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            PigConstants.PIG_FEEDS
+        )
+
+        val adapterPigType = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            PigConstants.PIG_TYPE
         )
 
         //CALL THE COMPONENTS
@@ -188,6 +228,8 @@ class AddPigFragment : Fragment() {
         binding.healthStatus.setAdapter(healthAdapter)
         binding.illness.setAdapter(illnessAdapter)
         binding.vaccine.setAdapter(vaccineAdapter)
+        binding.feed.setAdapter(adapterFeed)
+        binding.pigType.setAdapter(adapterPigType)
     }
 
     private fun calculateAgeFromBirthDate(birthDate: String): Int? {
@@ -235,6 +277,11 @@ class AddPigFragment : Fragment() {
         val gender = binding.gender.text.toString().toRequestBodyOptional()
         val weight = binding.weight.text.toString().toRequestBodyOptional()
         val birthDate = binding.birthDate.text.toString().toRequestBodyOptional()
+        val pigType = binding.pigType.text.toString().toRequestBodyOptional()
+
+        val feedText = binding.feed.text?.toString()?.trim()
+        val feed = if (feedText.isNullOrEmpty()) null else feedText.toRequestBody()
+
 
 
         val imagePart = imageFile?.let { file ->
@@ -244,11 +291,16 @@ class AddPigFragment : Fragment() {
 
         val api = AddPigsRI.getInstance(TokenManager.getToken(requireContext()))
         val cageIdBody = cageId?.toRequestBodyOptional()
+
+        binding.addPig.isEnabled = false
+        binding.addPig.text = "Adding pig...."
+
         lifecycleScope.launch {
             try {
                 val response = api.addPigs(
                     name = name,
                     breed = breed,
+                    pigType = pigType,
 //                    age = age,
                     price = price,
                     illness = illness,
@@ -263,10 +315,17 @@ class AddPigFragment : Fragment() {
                     cageId = cageIdBody,
                     image = imagePart,
                     birthDate = birthDate,
-                    weight = weight
+                    weight = weight,
+                    feed = feed
                 )
 
                 if (response.isSuccessful) {
+
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, PigFragment())
+                        .addToBackStack(null)
+                        .commit()
+
                     Toast.makeText(requireContext(), "Pig added successfully!", Toast.LENGTH_SHORT).show()
                     val addedPig: PigRequestModel? = response.body()
 
@@ -274,11 +333,20 @@ class AddPigFragment : Fragment() {
 
                     println("Added pig: $addedPig")
                 } else {
+
+                    binding.addPig.isEnabled = true
+                    binding.addPig.text = "Add pig"
+
                     Toast.makeText(requireContext(), "Failed: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
 
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+
+                binding.addPig.isEnabled = true
+                binding.addPig.text = "Add pig"
+
+                Log.e("Add Pig", "Error: ${e.message}")
+                Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
                 e.printStackTrace()
             }
         }

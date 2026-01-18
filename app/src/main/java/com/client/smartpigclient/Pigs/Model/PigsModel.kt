@@ -8,6 +8,7 @@ data class PigsModel(
     val id: String,
     var  name: String,
     var  breed: String? = null,
+    var pigType: String? = null,
     var  age: Int? = null,
     var  price: Double? = null,
     var  illness: String? = null,
@@ -29,6 +30,7 @@ data class PigsModel(
     var  status: String? = null,
     var  birthDate: String? = null,
     var  weight: String? = null,
+    var feed: String? = null,
     var  qr_url: String? = null,
     var  image_url: String? = null,
     val createdAt: String,
@@ -38,6 +40,7 @@ data class PigsModel(
 data class PigRequestModel(
     val name: String,
     val breed: String? = null,
+    var pigType: String? = null,
     val age: Int? = null,
     val price: Double? = null,
     val illness: String? = null,
@@ -58,7 +61,8 @@ data class PigRequestModel(
     val gender: String? = null,
     val status: String? = null,
     val birthDate: String? = null,
-    val weight: String? = null
+    val weight: String? = null,
+    var feed: String? = null,
 )
 
 data class PigBuyerNameRequest(

@@ -62,6 +62,9 @@ class SignupFragment : Fragment() {
             return
         }
 
+        binding.btnSignup.isEnabled = false
+        binding.btnSignup.text = "Signing in....."
+
         lifecycleScope.launch {
             try {
                 val response = AuthenticationRI.authApi().signup(
@@ -92,6 +95,10 @@ class SignupFragment : Fragment() {
                 Log.d("SIGNUP", "User created: ${response.id}")
 
             } catch (e: Exception) {
+
+                binding.btnSignup.isEnabled = true
+                binding.btnSignup.text = "Signup"
+
                 Log.e("SIGNUP", e.message ?: "Signup failed")
                 Toast.makeText(
                     requireContext(),

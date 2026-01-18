@@ -28,6 +28,8 @@ class PigFragment : Fragment() {
     private var cageId: String? = null
     private var cageName: String? = null
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -36,6 +38,20 @@ class PigFragment : Fragment() {
         }
     }
 
+    companion object {
+        private const val ARG_CAGE_ID = "cage_id"
+        private const val ARG_CAGE_NAME = "cage_name"
+
+        @JvmStatic
+        fun newInstance(cageId: String, cageName: String) =
+            PigFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_CAGE_ID, cageId)
+                    putString(ARG_CAGE_NAME, cageName)
+
+                }
+            }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,7 +78,16 @@ class PigFragment : Fragment() {
 
         // 1️⃣ Setup RecyclerView
         binding.rvPigs.layoutManager = LinearLayoutManager(requireContext())
-        pigsAdapter = PigsAdapter(pigList, parentFragmentManager)
+        pigsAdapter = PigsAdapter(pigList, { clickedPig ->
+            val fragment = PigHealthHistoryFragment.newInstance(clickedPig)
+            parentFragmentManager.beginTransaction()
+                .replace(
+                    (requireActivity() as MainActivity).binding.fragmentContainer.id,
+                    fragment
+                )
+                .addToBackStack(null)
+                .commit()
+        }, parentFragmentManager)
         binding.rvPigs.adapter = pigsAdapter
 
         // 2️⃣ Fetch pigs from API
@@ -89,19 +114,7 @@ class PigFragment : Fragment() {
         }
     }
 
-    companion object {
-        private const val ARG_CAGE_ID = "cage_id"
-        private const val ARG_CAGE_NAME = "cage_name"
 
-        @JvmStatic
-        fun newInstance(cageId: String, cageName: String) =
-            PigFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_CAGE_ID, cageId)
-                    putString(ARG_CAGE_NAME, cageName)
-                }
-            }
-    }
 
     override fun onResume() {
         super.onResume()

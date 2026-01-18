@@ -68,6 +68,9 @@
                 return
             }
 
+            binding.btnLogin.isEnabled = false
+            binding.btnLogin.text = "Logging in..."
+
             lifecycleScope.launch {
                 try {
                     val response = AuthenticationRI.authApi().login(
@@ -90,6 +93,10 @@
                     requireActivity().finish() // optional
 
                 } catch (e: Exception) {
+
+                    binding.btnLogin.isEnabled = true
+                    binding.btnLogin.text = "Log In"
+
                     Log.e("LOGIN", e.message ?: "Login failed")
                     Toast.makeText(requireContext(), "Login failed", Toast.LENGTH_SHORT).show()
                 }

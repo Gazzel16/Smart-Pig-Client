@@ -35,6 +35,7 @@ class CagesFragment : Fragment() {
     private lateinit var cagesAdapter: CagesAdapter
     private val cagesList = mutableListOf<CageModel>()
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layoutPigHealthHistory"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <!-- Pig Snapshot Section -->
+    <TextView
+        android:id="@+id/tvPigSnapshotTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pig Snapshot"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingBottom="8dp"/>
+
+ <LinearLayout
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:background="@drawable/round_corner_bg"
+     android:orientation="horizontal">
+
+     <ImageView
+         android:id="@+id/imagePlaceHolder"
+         android:layout_width="100dp"
+         android:layout_height="match_parent"
+         android:scaleType="fitXY"
+         android:layout_gravity="center"
+         app:srcCompat="@drawable/pig" />
+
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center"
+         android:layout_margin="8dp"
+         android:orientation="vertical"
+         >
+
+         <TextView
+             android:id="@+id/tvPigName"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textSize="15sp"
+             android:textStyle="italic"
+             android:fontFamily="sans-serif-condensed"
+             android:text="Name: "/>
+
+         <TextView
+             android:id="@+id/tvPigBreed"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textStyle="italic"
+             android:text="Breed: "/>
+
+         <TextView
+             android:id="@+id/tvPigGender"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textStyle="italic"
+             android:text="Gender: "/>
+
+         <TextView
+             android:id="@+id/tvPigAge"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textStyle="italic"
+             android:visibility="gone"
+             android:text="Age: "/>
+
+         <TextView
+             android:id="@+id/tvPigWeight"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textStyle="italic"
+             android:visibility="gone"
+             android:text="Weight: "/>
+
+         <TextView
+             android:id="@+id/tvFeed"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textStyle="italic"
+             android:visibility="gone"
+             android:text="Feed: "/>
+
+         <TextView
+             android:id="@+id/tvPigPrice"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textStyle="italic"
+             android:text="Price: "/>
+
+         <TextView
+             android:id="@+id/tvPigCage"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textStyle="italic"
+             android:text="Cage: "/>
+
+         <TextView
+             android:id="@+id/tvBirthDate"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textStyle="italic"
+             android:text="Birth Date: "/>
+     </LinearLayout>
+ </LinearLayout>
+
+    <!-- Health Event Section -->
+    <TextView
+        android:id="@+id/tvHealthEventTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Health History"
+        android:textSize="18sp"
+        android:layout_marginTop="5dp"
+        android:textStyle="bold"
+        android:paddingBottom="8dp"/>
+
+    <!-- RecyclerView for Health Events -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvHealthHistory"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="3dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"/>
+
+</LinearLayout>

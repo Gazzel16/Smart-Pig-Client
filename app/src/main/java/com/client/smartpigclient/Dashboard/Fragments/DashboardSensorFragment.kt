@@ -33,8 +33,8 @@ class DashboardSensorFragment : Fragment() {
 
     private val database = FirebaseDatabase.getInstance()
     private val sensorRef = database.getReference("sensor")
-
-
+    private var lastTemperature: Int? = null
+    private var lastHumidity: Int? = null
     private lateinit var tempDataSet: LineDataSet
     private lateinit var humidDataSet: LineDataSet
     private lateinit var lineData: LineData
@@ -148,34 +148,36 @@ class DashboardSensorFragment : Fragment() {
                 val temp = snapshot.child("temp").getValue(Double::class.java)?.toFloat()
                 val humid = snapshot.child("humid").getValue(Double::class.java)?.toFloat()
 
-                // Temperature description
-                if (temp != null) {
+                // Only proceed if temp and humid are not null
+                if (temp != null && humid != null) {
+                    val temperature = temp.toInt()
+                    val humidity = humid.toInt()
 
-                    // Very hot
-                    if (temp >= 35 && temp < 40) {
-                        binding.tempDescription.text = "Very hot! Pigs may reduce feed intake and pant."
-                    }
-                    // Extreme heat
-                    else if (temp >= 40 && temp <= 50) {
-                        binding.tempDescription.text = "Extreme heat! Immediate cooling required (water, shade)."
-                    }
-                    // Out of range
-                    else {
-                        binding.tempDescription.text = "Temperature out of expected range."
+                    // Only update if values changed
+                    if (temperature != lastTemperature || humidity != lastHumidity) {
+
+                        // Temperature message
+                        val tempMsg = when {
+                            temperature > 33 -> "The current temperature is ${temperature}°C. Hot environment. Increase airflow, provide shade, and watch for signs of heat stress."
+                            else -> "The current temperature is ${temperature}°C. Environment is normal."
+                        }
+
+                        // Humidity message
+                        val humidMsg = when {
+                            humidity > 90 -> "The current humidity is ${humidity}% High humidity detected. Increase airflow and keep bedding dry to avoid disease risk."
+                            else -> "The current humidity is ${humidity}%. Normal range."
+                        }
+
+                        // Set the TextViews
+                        binding.tempDescription.text = tempMsg
+                        binding.humidDescription.text = humidMsg
+
+                        // Update last values
+                        lastTemperature = temperature
+                        lastHumidity = humidity
                     }
                 }
 
-                // Humidity description
-                if (humid != null) {
-                    // Extreme
-                    if (humid > 90) {
-                        binding.humidDescription.text = "Extreme humidity! Increase ventilation and keep pigs cool."
-                    }
-                    // Out of range
-                    else {
-                        binding.humidDescription.text = "Humidity out of expected range."
-                    }
-                }
             }
 
             override fun onCancelled(error: DatabaseError) {

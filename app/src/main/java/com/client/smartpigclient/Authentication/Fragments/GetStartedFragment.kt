@@ -1,11 +1,14 @@
 package com.client.smartpigclient.Authentication.Fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.client.smartpigclient.MainActivity
 import com.client.smartpigclient.R
+import com.client.smartpigclient.Utils.TokenManager
 import com.client.smartpigclient.databinding.FragmentGetStartedBinding
 
 private const val ARG_PARAM1 = "param1"
@@ -17,8 +20,13 @@ class GetStartedFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-
+        // Check if token exists
+        val token = TokenManager.getToken(requireContext())
+        if (token.isNotEmpty()) {
+            // Token exists, redirect to Dashboard
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
         }
     }
 
