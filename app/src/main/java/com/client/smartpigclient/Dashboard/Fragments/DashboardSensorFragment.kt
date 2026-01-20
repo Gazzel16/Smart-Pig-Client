@@ -1,5 +1,6 @@
 package com.client.smartpigclient.Dashboard.Fragments
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -7,7 +8,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
+import com.client.smartpigclient.Dashboard.Api.DashBoardApi
+import com.client.smartpigclient.Dashboard.Api.DashBoardRI
+import com.client.smartpigclient.Dashboard.Model.RelayModel
 import com.client.smartpigclient.R
+import com.client.smartpigclient.Utils.TokenManager
 import com.client.smartpigclient.databinding.FragmentDashboardSensorBinding
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
@@ -23,7 +29,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 
 class DashboardSensorFragment : Fragment() {
@@ -35,10 +44,20 @@ class DashboardSensorFragment : Fragment() {
     private val sensorRef = database.getReference("sensor")
     private var lastTemperature: Int? = null
     private var lastHumidity: Int? = null
+    private var lastWaterIndicator: Int? = null
     private lateinit var tempDataSet: LineDataSet
     private lateinit var humidDataSet: LineDataSet
+    private lateinit var waterIndicatorDataSet: LineDataSet
     private lateinit var lineData: LineData
     private var index = 0f // X-axis counter
+
+    private var ignoreSwitchListener = false
+    private var currentRelayState = false
+    private var countdownJob: Job? = null
+    private var remainingSeconds = 0
+
+
+    private lateinit var dashboardApi: DashBoardApi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,11 +75,116 @@ class DashboardSensorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tempHumidDescription()
+        val token = TokenManager.getToken(requireContext())
+        dashboardApi = DashBoardRI.getInstance(token)
 
+
+
+        relaySwitch()
+        startRelayAutoSync()
+        tempHumidDescription()
         setupChart(binding.sensorChart)
         listenSensorData()
     }
+
+    private fun relaySwitch(){
+        currentRelayState = false
+        binding.relaySwitch.isChecked = false
+        updateRelaySwitchUI(false)
+
+        binding.relaySwitch.setOnCheckedChangeListener { _, isChecked ->
+            // Ignore programmatic updates
+            if (ignoreSwitchListener) return@setOnCheckedChangeListener
+
+            // No-op if same state
+            if (currentRelayState == isChecked) return@setOnCheckedChangeListener
+
+            updateRelaySwitchUI(isChecked)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    val updatedRelay =
+                        dashboardApi.setRelayRequest(RelayModel(isChecked))
+
+                    currentRelayState = updatedRelay.is_on
+                    updateRelaySwitchUI(isChecked)
+                    Log.d("Relay", "Relay updated: ${updatedRelay.is_on}")
+
+                } catch (e: Exception) {
+                    Log.e("Relay", "Failed to update relay", e)
+
+                    ignoreSwitchListener = true
+                    binding.relaySwitch.isChecked = currentRelayState
+
+                    updateRelaySwitchUI(isChecked)
+                    ignoreSwitchListener = false
+                }
+            }
+        }
+    }
+    private fun startRelayAutoSync() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            while (isAdded) { // run only while fragment is active
+                try {
+                    val relay = dashboardApi.getRelayResponse()
+                    if (currentRelayState != relay.is_on) {
+                        ignoreSwitchListener = true
+                        binding.relaySwitch.isChecked = relay.is_on
+                        currentRelayState = relay.is_on
+
+                        updateRelaySwitchUI(relay.is_on)
+                        ignoreSwitchListener = false
+                    }
+
+                } catch (e: Exception) {
+                    Log.e("Relay", "Failed to fetch relay state", e)
+                }
+
+                // Wait before checking again (every 5 seconds here)
+                kotlinx.coroutines.delay(5000)
+            }
+        }
+    }
+
+    private fun updateRelaySwitchUI(isOn: Boolean) {
+        val color = if (isOn) Color.parseColor("#009688") else Color.parseColor("#9E9E9E")
+        binding.relaySwitch.thumbTintList = ColorStateList.valueOf(color)
+        binding.relaySwitch.trackTintList = ColorStateList.valueOf(color)
+        binding.relaySwitch.text = if (isOn) "ON" else "OFF"
+
+        updateTimerVisibility(isOn)
+    }
+
+    private fun updateTimerVisibility(isOn: Boolean) {
+        // Stop any existing countdown
+        countdownJob?.cancel()
+        countdownJob = null
+
+        if (!isOn) {
+            binding.timer.visibility = View.GONE
+            return
+        }
+
+        binding.timer.visibility = View.VISIBLE
+
+        var remainingSeconds = 2 * 60 // change to 2 * 60 if needed
+
+        countdownJob = viewLifecycleOwner.lifecycleScope.launch {
+            while (remainingSeconds >= 0 && isActive) {
+                val minutes = remainingSeconds / 60
+                val seconds = remainingSeconds % 60
+                binding.timer.text =
+                    String.format("Timer: %02d:%02d", minutes, seconds)
+
+                delay(1000)
+                remainingSeconds--
+            }
+
+            // Optional: auto-hide when finished
+            binding.timer.visibility = View.GONE
+        }
+    }
+
 
     private fun setupChart(chart: LineChart) {
         chart.description.isEnabled = false
@@ -105,7 +229,17 @@ class DashboardSensorFragment : Fragment() {
             fillAlpha = 80
         }
 
-        lineData = LineData(tempDataSet, humidDataSet)
+        waterIndicatorDataSet = LineDataSet(ArrayList(), "").apply {
+            color = Color.parseColor("#4CAF50")
+            lineWidth = 2f
+            setDrawCircles(false)
+            setDrawValues(false)
+            setDrawFilled(true)
+            fillColor = Color.parseColor("#4CAF50")
+            fillAlpha = 80
+        }
+
+        lineData = LineData(tempDataSet, humidDataSet, waterIndicatorDataSet)
         chart.data = lineData
         chart.invalidate()
     }
@@ -114,13 +248,15 @@ class DashboardSensorFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val temp = snapshot.child("temp").getValue(Double::class.java)?.toFloat()
                 val humid = snapshot.child("humid").getValue(Double::class.java)?.toFloat()
+                val waterIndicator = snapshot.child("rain").getValue(Double::class.java)?.toFloat()
 
-                if (temp != null && humid != null) {
+                if (temp != null && humid != null && waterIndicator != null) {
                     // Only update if view is still alive
                     _binding?.let { binding ->
                         // Add entries
                         tempDataSet.addEntry(Entry(index, temp))
                         humidDataSet.addEntry(Entry(index, humid))
+                        waterIndicatorDataSet.addEntry(Entry(index, waterIndicator ))
                         index += 1f
 
                         // Notify chart
@@ -134,6 +270,7 @@ class DashboardSensorFragment : Fragment() {
                         // Update text
                         binding.tempData.text = "Temperature: ${temp}°C"
                         binding.humidData.text = "Humidity: ${humid}%"
+                        binding.waterData.text = "Water Level: ${waterIndicator}%"
                     }
                 }
             }
@@ -147,34 +284,43 @@ class DashboardSensorFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val temp = snapshot.child("temp").getValue(Double::class.java)?.toFloat()
                 val humid = snapshot.child("humid").getValue(Double::class.java)?.toFloat()
-
+                val waterIndicator = snapshot.child("rain").getValue(Double::class.java)?.toFloat()
                 // Only proceed if temp and humid are not null
-                if (temp != null && humid != null) {
+                if (temp != null && humid != null && waterIndicator != null) {
                     val temperature = temp.toInt()
                     val humidity = humid.toInt()
+                    val water = waterIndicator.toInt()
 
                     // Only update if values changed
-                    if (temperature != lastTemperature || humidity != lastHumidity) {
+                    if (temperature != lastTemperature || humidity != lastHumidity || water != lastWaterIndicator) {
 
                         // Temperature message
                         val tempMsg = when {
                             temperature > 33 -> "The current temperature is ${temperature}°C. Hot environment. Increase airflow, provide shade, and watch for signs of heat stress."
-                            else -> "The current temperature is ${temperature}°C. Environment is normal."
+                            else -> "The current temperature is normal."
                         }
 
                         // Humidity message
                         val humidMsg = when {
                             humidity > 90 -> "The current humidity is ${humidity}% High humidity detected. Increase airflow and keep bedding dry to avoid disease risk."
-                            else -> "The current humidity is ${humidity}%. Normal range."
+                            else -> "The current humidity is in normal range."
+                        }
+
+                        val waterMsg = when {
+                            waterIndicator > 70 -> "The water is above average"
+                            waterIndicator < 20 -> "The water is below average"
+                            else -> "The water is at a normal level"
                         }
 
                         // Set the TextViews
                         binding.tempDescription.text = tempMsg
                         binding.humidDescription.text = humidMsg
+                        binding.waterDescription.text = waterMsg
 
                         // Update last values
                         lastTemperature = temperature
                         lastHumidity = humidity
+                        lastWaterIndicator = water
                     }
                 }
 

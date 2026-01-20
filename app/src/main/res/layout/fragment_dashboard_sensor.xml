@@ -166,6 +166,27 @@
                             android:layout_gravity="center"
                             android:textStyle="italic" />
 
+                        <View
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="4dp"
+                            android:background="@drawable/circle_bg"
+                            android:backgroundTint="#4CAF50" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="6dp"
+                            android:layout_marginLeft="12dp"
+                            android:fontFamily="sans-serif"
+                            android:text="Water Level"
+
+                            android:textSize="13sp"
+                            android:layout_gravity="center"
+                            android:textStyle="italic" />
+
+
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -196,6 +217,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="18sp"
                             android:fontFamily="sans-serif"
+                            android:textColor="#F44336"
                             android:textStyle="italic"
                             android:text="Temperature: 100" />
 
@@ -205,6 +227,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:layout_margin="4dp"
+
                             android:textStyle="italic"
                             android:text="Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum" />
                     </LinearLayout>
@@ -221,6 +244,8 @@
                             android:id="@+id/humidData"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:textColor="@color/blueGreen"
                             android:text="Humidity: 100" />
 
                         <TextView
@@ -231,10 +256,106 @@
                             android:text="Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum" />
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp"
+                        android:layout_margin="8dp"
+                        android:background="@drawable/dashed_border"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/waterData"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:textColor="#4CAF50"
+                            android:text="Water Level: 100" />
+
+                        <TextView
+                            android:id="@+id/waterDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            android:text="Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum" />
+                    </LinearLayout>
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:background="@drawable/edittext_bg"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textStyle="italic"
+                        android:text="Cage Water Sprinkler" />
+
+                    <Switch
+                        android:id="@+id/relaySwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Switch" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/dashed_border"
+                    android:padding="8dp"
+                    android:textSize="13sp"
+                    android:text="Toggle the water pump ON. It will automatically stop after 2 minutes." />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="6dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:textColor="#F44336"
+                        android:layout_weight="1"
+                        android:drawableStart="@drawable/warning_ic"
+                        android:drawablePadding="6dp"
+                        android:drawableTint="#FFC107"
+
+                        android:text="Low tank can damage the pump." />
+
+                    <TextView
+                        android:id="@+id/timer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Timer: 2:00"
+                        android:background="@drawable/round_corner_bg"
+                        android:backgroundTint="#FF5722"
+                        android:textColor="@color/white"
+                        android:padding="3dp"
+                        android:layout_marginRight="8dp"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:textStyle="italic" />
+                </LinearLayout>
+
+            </LinearLayout>
 
 
         </LinearLayout>
