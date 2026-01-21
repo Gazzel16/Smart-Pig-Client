@@ -22,11 +22,13 @@ import androidx.lifecycle.lifecycleScope
 import com.client.smartpigclient.Cages.Api.FetchCageRI
 import com.client.smartpigclient.Dashboard.Api.DashBoardApi
 import com.client.smartpigclient.Dashboard.Api.DashBoardRI
+import com.client.smartpigclient.Dashboard.Model.ChatRequest
 import com.client.smartpigclient.Pigs.Api.GetPigsAnalyticsRI
 import com.client.smartpigclient.Pigs.Model.PigAnalyticsResponse
 
 import com.client.smartpigclient.R
 import com.client.smartpigclient.Utils.TokenManager
+import com.client.smartpigclient.Utils.getSpinnerAdapter
 import com.client.smartpigclient.databinding.FragmentDashboardAnalyticsBinding
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -50,6 +52,12 @@ class DashboardAnalyticsFragment : Fragment() {
     private var selectedYear: Int = 0
     private var selectedMonth: Int = 0
 
+    private var totalPigs: Int = 0
+    private var totalCages: Int = 0
+    private var malePigs: Int = 0
+    private var femalePigs: Int = 0
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,13 +75,60 @@ class DashboardAnalyticsFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val selectedType = binding.typeDropdown.selectedItem.toString()
-            navigateToChatBot("Give me health insights about pig $selectedType records.")
+            val selectedType = binding.categoryDropdown.selectedItem.toString()
+
+            // Skip placeholder
+            if (selectedType == "Select Type" || selectedType.startsWith("Select")) {
+                Toast.makeText(requireContext(), "Please select a valid category first", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Count pigs for this category
+            val api = DashBoardRI.getInstance(TokenManager.getToken(requireContext()))
+            lifecycleScope.launch {
+                val allPigs = try {
+                    api.fetchAllPigs()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), "Failed to load pigs", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                val filteredPigs =
+                    if (binding.typeDropdown.selectedItem == "Vaccine") {
+                        allPigs.filter { it.vaccine == selectedType }
+                    } else {
+                        allPigs.filter { it.illness == selectedType }
+                    }
+
+                val pigsCount = filteredPigs.size
+                val maleCount = filteredPigs.count { it.gender == "Male" }
+                val femaleCount = filteredPigs.count { it.gender == "Female" }
+
+                // Send message to chatbot with counts
+                navigateToChatBot(
+                    "Give me health insights about pig $selectedType. " +
+                            "Total pigs recorded: $pigsCount (Male: $maleCount, Female: $femaleCount)."
+                )
+            }
+        }
+        binding.pigsAndCagesInsights.setOnClickListener {
+            // Make sure data is loaded
+            if (totalPigs == 0 && totalCages == 0) {
+                Toast.makeText(requireContext(), "Analytics not loaded yet", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Build the message just like pigHealthInsights
+            val message = "Give me insights about pigs and cages status. " +
+                    "Total Pigs: $totalPigs (Male: $malePigs, Female: $femalePigs), " +
+                    "Total Cages: $totalCages."
+
+            // Navigate to chat fragment and let it handle API call
+            navigateToChatBot(message)
         }
 
-        binding.pigsAndCagesInsights.setOnClickListener {
-            navigateToChatBot("Give me insights about pigs and cages status.")
-        }
+
 
         binding.yearAndMonth.setOnClickListener {
             showMonthYearPicker()
@@ -99,27 +154,23 @@ class DashboardAnalyticsFragment : Fragment() {
     }
 
     private fun pigsAndCagesChart() {
-
         val sharedPref = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val token = sharedPref.getString("auth_token", "") ?: ""
 
-
         val apiPigs = DashBoardRI.getInstance(token)
-        val apiCage = FetchCageRI.getInstance(token) // assuming this returns a list of cages
+        val apiCage = FetchCageRI.getInstance(token)
 
         lifecycleScope.launch {
             try {
-                // Fetch data
                 val allPigs = apiPigs.fetchAllPigs()
-                val allCages = apiCage.fetchCage() // implement fetchAllCages() in your API
+                val allCages = apiCage.fetchCage()
 
-                // Analytics
-                val totalPigs = allPigs.size
-                val totalCages = allCages.size
-                val malePigs = allPigs.count { it.gender == "Male" }
-                val femalePigs = allPigs.count { it.gender == "Female" }
+                // Save counts to fragment-level variables
+                totalPigs = allPigs.size
+                totalCages = allCages.size
+                malePigs = allPigs.count { it.gender == "Male" }
+                femalePigs = allPigs.count { it.gender == "Female" }
 
-                // Prepare chart entries
                 val entries = arrayListOf<com.github.mikephil.charting.data.BarEntry>()
                 entries.add(com.github.mikephil.charting.data.BarEntry(0f, totalPigs.toFloat()))
                 entries.add(com.github.mikephil.charting.data.BarEntry(1f, totalCages.toFloat()))
@@ -143,7 +194,7 @@ class DashboardAnalyticsFragment : Fragment() {
                     xAxis.apply {
                         granularity = 1f
                         position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM
-                        setDrawGridLines(false) // Remove vertical lines
+                        setDrawGridLines(false)
                         setDrawLabels(false)
                     }
                     axisLeft.apply {
@@ -164,80 +215,115 @@ class DashboardAnalyticsFragment : Fragment() {
         }
     }
 
-
     private fun healthPigsAnalytics() {
+
         val typeOptions = listOf("Select Type", "Vaccine", "Illness")
+
         val vaccineOptions = listOf(
+            "Select Vaccine",
             "Swine Fever Vaccine",
             "Foot and Mouth Disease Vaccine",
             "PRRS Vaccine",
             "Classical Swine Fever Vaccine",
-            "Other"
+            "Other",
+            "Select Type"
         )
+
         val illnessOptions = listOf(
+            "Select Illness",
             "Swine Flu",
             "Foot and Mouth Disease",
             "Skin Infection",
             "Respiratory Infection",
-            "Other"
+            "Other",
+            "Select Type"
         )
 
-        val typeAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_item,
-            typeOptions
-        )
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.typeDropdown.adapter = typeAdapter
-
-        val sharedPref = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val token = sharedPref.getString("auth_token", "") ?: ""
-
+        binding.typeDropdown.adapter = getSpinnerAdapter(requireContext(), typeOptions)
+        binding.typeDropdown.visibility = View.VISIBLE
+        binding.categoryDropdown.visibility = View.GONE
 
         val api = DashBoardRI.getInstance(TokenManager.getToken(requireContext()))
+
         lifecycleScope.launch {
-            val allPigs = try {
-                api.fetchAllPigs()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Toast.makeText(requireContext(), "Failed to load pigs", Toast.LENGTH_SHORT).show()
-                return@launch
-            }
+            val allPigs = api.fetchAllPigs()
 
-            binding.typeDropdown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                    val selectedType = parent.getItemAtPosition(position).toString()
-                    if (selectedType == "Select Type") {
-                        updatePigVaccineChart(0, 0)
-                        return
-                    }
+            // 🔹 TYPE SPINNER
+            binding.typeDropdown.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
 
-                    // Show a dialog to pick specific vaccine or illness
-                    val options = if (selectedType == "Vaccine") vaccineOptions else illnessOptions
-                    android.app.AlertDialog.Builder(requireContext())
-                        .setTitle("Select $selectedType")
-                        .setItems(options.toTypedArray()) { _, which ->
-                            val selectedOption = options[which]
-
-                            val filteredPigs = if (selectedType == "Vaccine") {
-                                allPigs.filter { it.vaccine == selectedOption }
-                            } else {
-                                allPigs.filter { it.illness == selectedOption }
+                    override fun onItemSelected(
+                        parent: AdapterView<*>,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        when (position) {
+                            1 -> { // Vaccine
+                                binding.categoryDropdown.adapter = getSpinnerAdapter(requireContext(), vaccineOptions)
+                                binding.categoryDropdown.visibility = View.VISIBLE
+                                binding.typeDropdown.visibility = View.GONE
                             }
 
-                            val maleCount = filteredPigs.count { it.gender == "Male" }
-                            val femaleCount = filteredPigs.count { it.gender == "Female" }
+                            2 -> { // Illness
 
-                            updatePigVaccineChart(maleCount, femaleCount)
+                                binding.categoryDropdown.adapter = getSpinnerAdapter(requireContext(), illnessOptions)
+                                binding.categoryDropdown.visibility = View.VISIBLE
+                                binding.typeDropdown.visibility = View.GONE
+                            }
+
+                            else -> {
+                                binding.categoryDropdown.visibility = View.GONE
+                                updatePigVaccineChart(0, 0)
+                            }
                         }
-                        .show()
+
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>) {}
                 }
 
-                override fun onNothingSelected(parent: AdapterView<*>) {}
-            }
+            // 🔹 CATEGORY SPINNER
+            binding.categoryDropdown.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
+
+                    override fun onItemSelected(
+                        parent: AdapterView<*>,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        if (position == 0) return
+
+                        val selectedValue = parent.getItemAtPosition(position).toString()
+
+
+                        if (selectedValue == "Select Type") {
+                            binding.categoryDropdown.visibility = View.GONE
+                            binding.typeDropdown.visibility = View.VISIBLE
+                            binding.typeDropdown.setSelection(0) // reset typeDropdown
+                            return
+                        }
+
+                        if (position == 0) return // skip placeholder
+
+                        val filteredPigs =
+                            if (binding.typeDropdown.selectedItem == "Vaccine") {
+                                allPigs.filter { it.vaccine == selectedValue }
+                            } else {
+                                allPigs.filter { it.illness == selectedValue }
+                            }
+
+                        val maleCount = filteredPigs.count { it.gender == "Male" }
+                        val femaleCount = filteredPigs.count { it.gender == "Female" }
+
+                        updatePigVaccineChart(maleCount, femaleCount)
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>) {}
+                }
         }
     }
-
 
 
     private fun updatePigVaccineChart(maleCount: Int, femaleCount: Int) {

@@ -204,11 +204,19 @@
 
                     </LinearLayout>
 
-                    <Button
+                    <TextView
                         android:id="@+id/pigsAndCagesInsights"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:textColor="@color/white"
+                        android:drawableStart="@drawable/bot_ic"
+                        android:textStyle="italic"
+                        android:drawableTint="@color/white"
+                        android:background="@drawable/round_corner_bg"
                         android:backgroundTint="@color/emeraldGreen"
                         android:text="Chatbot Insights" />
                 </LinearLayout>
@@ -245,7 +253,7 @@
 
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginLeft="14dp"
                         android:layout_marginRight="5dp"
                         android:background="@drawable/round_corner_bg"
@@ -256,6 +264,13 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
                             android:layout_gravity="center" />
+
+                        <Spinner
+                            android:id="@+id/categoryDropdown"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:visibility="gone" />
                     </FrameLayout>
 
                     </LinearLayout>
@@ -306,6 +321,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:gravity="center"
                             android:layout_margin="6dp"
                             android:layout_gravity="center"
                             android:layout_marginLeft="12dp"
@@ -316,11 +332,19 @@
 
                     </LinearLayout>
 
-                    <Button
+                    <TextView
                         android:id="@+id/pigHealthInsights"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:textColor="@color/white"
+                        android:drawableStart="@drawable/bot_ic"
+                        android:textStyle="italic"
+                        android:drawableTint="@color/white"
+                        android:background="@drawable/round_corner_bg"
                         android:backgroundTint="@color/emeraldGreen"
                         android:text="Chatbot Insights" />
                 </LinearLayout>

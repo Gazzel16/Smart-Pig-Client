@@ -17,7 +17,7 @@ interface DashBoardApi {
     @GET("api/pigs")
     suspend fun fetchAllPigs(): List<PigsModel>
 
-    @POST("api/chat_bot")
+    @POST("api/chat_bot/")
     suspend fun chatBotResponse(@Body request: ChatRequest): ChatResponse
 
     @GET("/api/relay")
