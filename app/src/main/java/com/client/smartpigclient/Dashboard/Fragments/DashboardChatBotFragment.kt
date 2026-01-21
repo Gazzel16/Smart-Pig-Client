@@ -33,6 +33,12 @@ class DashboardChatBotFragment : Fragment() {
         setupRecyclerView()
         setupButtons()
 
+        val insightMessage = arguments?.getString("INSIGHT_MESSAGE")
+        insightMessage?.let {
+            binding.questionInputs.visibility = View.GONE
+            sendMessage(it)
+        }
+
         return binding.root
     }
 

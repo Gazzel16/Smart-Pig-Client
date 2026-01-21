@@ -270,7 +270,7 @@ class DashboardSensorFragment : Fragment() {
                         // Update text
                         binding.tempData.text = "Temperature: ${temp}°C"
                         binding.humidData.text = "Humidity: ${humid}%"
-                        binding.waterData.text = "Water Level: ${waterIndicator}%"
+                        binding.waterData.text = "Water Tank Level: ${waterIndicator}%"
                     }
                 }
             }

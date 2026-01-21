@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FA"
+    tools:context=".Settings.Fragments.AboutFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Header Image -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/pig_collar_qr" />
+
+        <!-- About Us -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="About Us"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#1E88E5" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:background="@drawable/edittext_bg"
+            android:lineSpacingExtra="4dp"
+            android:text="Each pig is equipped with a durable collar containing a unique QR code for fast and accurate identification. By scanning the QR code, farmers, veterinarians, and farm staff can instantly access essential information such as health records, vaccination history, age, breed, feeding schedule, and ownership details." />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:background="@drawable/edittext_bg"
+            android:lineSpacingExtra="4dp"
+            android:text="The collar is lightweight, waterproof, and comfortable for long-term use, ensuring animal welfare while improving farm efficiency. QR-based identification reduces manual record errors and enhances traceability and productivity." />
+
+        <!-- Smart Pig Cage -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="What is Smart Pig Cage?"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#2E7D32" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/cage_with_qr" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:lineSpacingExtra="4dp"
+            android:background="@drawable/edittext_bg"
+            android:text="The Smart Pig Cage system integrates QR-based identification, implemented environmental sensors, and automated water pump control to modernize livestock management. It enables farmers to monitor pig health, cage conditions, and water supply in real time while reducing manual work." />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_bg"
+            android:layout_marginTop="6dp"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:lineSpacingExtra="4dp"
+            android:text="Each pig and cage is registered in the mobile application, where a unique QR code is automatically generated. Scanning the QR code provides instant access to pig profiles, cage information, sensor data, and analytics for better decision-making." />
+
+    </LinearLayout>
+
+</ScrollView>

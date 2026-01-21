@@ -1,5 +1,6 @@
 package com.client.smartpigclient.Settings.Fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.client.smartpigclient.AuthActivity
+import com.client.smartpigclient.Config.Prefs
 import com.client.smartpigclient.MainActivity
+import com.client.smartpigclient.Pigs.Fragments.PigFragment
+import com.client.smartpigclient.R
 import com.client.smartpigclient.databinding.FragmentSettingsBinding
 
 private const val ARG_PARAM1 = "param1"
@@ -41,9 +45,12 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Example:
-        // binding.btnSave.setOnClickListener { ... }
-
+        binding.about.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, AboutFragment())
+                .addToBackStack(null)
+                .commit()
+        }
         binding.logout.setOnClickListener {
 
             val sharedPref = requireActivity()
@@ -53,6 +60,30 @@ class SettingsFragment : Fragment() {
             val intent = Intent(requireContext(), AuthActivity::class.java)
             startActivity(intent)
             requireActivity().finish()
+        }
+
+        aiVoiceSwitch()
+    }
+
+    private fun aiVoiceSwitch(){
+        val prefs = requireContext().getSharedPreferences(
+            Prefs.PREF_NAME,
+            Context.MODE_PRIVATE
+        )
+
+        binding.aiVoiceSwitch.isChecked =
+            prefs.getBoolean(Prefs.AI_VOICE_ENABLED, true)
+
+        binding.aiVoiceSwitch.setOnCheckedChangeListener { _, isChecked ->
+
+            val prefs = requireContext().getSharedPreferences(
+                Prefs.PREF_NAME,
+                Context.MODE_PRIVATE
+            )
+
+            prefs.edit()
+                .putBoolean(Prefs.AI_VOICE_ENABLED, isChecked)
+                .apply()
         }
     }
 

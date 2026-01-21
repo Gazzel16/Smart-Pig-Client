@@ -61,6 +61,20 @@ class DashboardAnalyticsFragment : Fragment() {
     ): View {
         _binding = FragmentDashboardAnalyticsBinding.inflate(inflater, container, false)
 
+        binding.pigHealthInsights.setOnClickListener {
+            if (binding.typeDropdown.selectedItemPosition == 0) {
+                Toast.makeText(requireContext(), "Please select a category first", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val selectedType = binding.typeDropdown.selectedItem.toString()
+            navigateToChatBot("Give me health insights about pig $selectedType records.")
+        }
+
+        binding.pigsAndCagesInsights.setOnClickListener {
+            navigateToChatBot("Give me insights about pigs and cages status.")
+        }
+
         binding.yearAndMonth.setOnClickListener {
             showMonthYearPicker()
         }
@@ -69,6 +83,19 @@ class DashboardAnalyticsFragment : Fragment() {
         pigsAndCagesChart()
         healthPigsAnalytics()
         return binding.root
+    }
+
+    private fun navigateToChatBot(insightMessage: String) {
+        val fragment = DashboardChatBotFragment().apply {
+            arguments = Bundle().apply {
+                putString("INSIGHT_MESSAGE", insightMessage)
+            }
+        }
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment) // ⚠️ use your real container id
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun pigsAndCagesChart() {

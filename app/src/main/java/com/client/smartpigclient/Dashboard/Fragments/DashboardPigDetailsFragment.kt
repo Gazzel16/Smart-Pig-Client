@@ -14,6 +14,7 @@ import com.client.smartpigclient.Pigs.Model.PigsModel
 import com.client.smartpigclient.R
 import com.client.smartpigclient.databinding.FragmentDashboardPigDetailsBinding
 import android.content.Context
+import android.util.Log
 import com.client.smartpigclient.Utils.formatDate
 import com.client.smartpigclient.Utils.formatDateWithoutHours
 
@@ -110,7 +111,9 @@ class DashboardPigDetailsFragment : Fragment() {
         pig?.let { pig ->
             // Header
             binding.name.text = pig.name
-            binding.birthDate.text = formatDateWithoutHours(pig.birthDate) ?: "N/A" // You can change this field
+            binding.birthDate.text = pig.birthDate ?: "N/A" // You can change this field
+            Log.d("PigDetails", "birthDate raw = ${pig.birthDate}")
+
 
             // Overview Tab
             binding.tvBreed.text = pig.breed ?: "N/A"

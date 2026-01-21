@@ -141,7 +141,7 @@
                                 android:layout_margin="6dp"
                                 android:layout_marginLeft="12dp"
                                 android:fontFamily="sans-serif"
-                                android:text="Cages"
+                                android:text="Pigs"
                                 android:layout_gravity="center"
                                 android:textSize="13sp"
                                 android:textStyle="italic" />
@@ -159,7 +159,7 @@
                                 android:layout_margin="6dp"
                                 android:layout_marginLeft="12dp"
                                 android:fontFamily="sans-serif"
-                                android:text="Pigs"
+                                android:text="Cages"
                                 android:layout_gravity="center"
                                 android:textSize="13sp"
                                 android:textStyle="italic" />
@@ -203,6 +203,14 @@
                                 android:textStyle="italic" />
 
                     </LinearLayout>
+
+                    <Button
+                        android:id="@+id/pigsAndCagesInsights"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:backgroundTint="@color/emeraldGreen"
+                        android:text="Chatbot Insights" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -307,6 +315,14 @@
                             android:textStyle="italic" />
 
                     </LinearLayout>
+
+                    <Button
+                        android:id="@+id/pigHealthInsights"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:backgroundTint="@color/emeraldGreen"
+                        android:text="Chatbot Insights" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

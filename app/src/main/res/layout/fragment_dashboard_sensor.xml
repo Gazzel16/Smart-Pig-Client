@@ -180,7 +180,7 @@
                             android:layout_margin="6dp"
                             android:layout_marginLeft="12dp"
                             android:fontFamily="sans-serif"
-                            android:text="Water Level"
+                            android:text="Water Tank Level"
 
                             android:textSize="13sp"
                             android:layout_gravity="center"

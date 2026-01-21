@@ -180,7 +180,7 @@ class ScanPigFragment : Fragment() {
                     binding.name.text = pig.name
                     binding.tvBreed.text = pig.breed ?: "N/A"
                     binding.tvGender.text = pig.gender ?: "N/A"
-                    binding.tvAge.text = pig.age?.let { "$it months" } ?: "N/A"
+                    binding.tvAge.text = pig.age.toString() ?: "N/A"
                     binding.tvStatus.text = pig.status ?: "N/A"
                     binding.tvOrigin.text = pig.origin ?: "N/A"
                     binding.tvCageName.text = pig.cageName ?: "N/A"
@@ -200,7 +200,7 @@ class ScanPigFragment : Fragment() {
                     binding.tvVaccine.text = pig.vaccine ?: "N/A"
                     binding.tvVaccineDate.text = formatDateWithoutHours(pig.vaccineDate) ?: "N/A"
                     binding.tvVaccineNextDue.text = formatDateWithoutHours(pig.vaccineNextDue) ?: "N/A"
-                    binding.tvBirthDate.text = formatDateWithoutHours(pig.birthDate) ?: "N/A"
+                    binding.tvBirthDate.text = pig.birthDate ?: "N/A"
 
 
                     pig.image_url?.let { url ->

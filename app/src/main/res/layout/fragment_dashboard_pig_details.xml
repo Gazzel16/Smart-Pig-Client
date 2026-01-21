@@ -81,14 +81,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-
+android:layout_gravity="center"
                     android:text="Masarap na baboy"
                     android:textSize="25sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/birthDate"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:gravity="center"

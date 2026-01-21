@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.client.smartpigclient.Cages.Fragments.CagesFragment
 import com.client.smartpigclient.Config.FcmTokenConfig
+import com.client.smartpigclient.Config.Prefs
 import com.client.smartpigclient.Dashboard.Api.PushNotificationRI
 import com.client.smartpigclient.Dashboard.Fragments.DashBoardFragment
 import com.client.smartpigclient.Dashboard.Fragments.DashboardFeedingScheduleFragment
@@ -83,8 +84,8 @@ class MainActivity : AppCompatActivity() {
         tts = TextToSpeech(this) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 tts.language = Locale.US
-                tts.setSpeechRate(0.9f)
-                tts.setPitch(1.0f)
+                tts.setSpeechRate(0.8f)
+                tts.setPitch(1.2f)
                 ttsReady = true
 
                     tempHumidDescription()
@@ -97,8 +98,17 @@ class MainActivity : AppCompatActivity() {
         FcmTokenConfig.fetchFcmToken()
     }
 
+    private fun isAIVoiceEnabled(): Boolean {
+        val prefs = getSharedPreferences(
+            Prefs.PREF_NAME,
+            Context.MODE_PRIVATE
+        )
+        return prefs.getBoolean(Prefs.AI_VOICE_ENABLED, true)
+    }
+
     private fun speak(text: String) {
         if (!ttsReady) return
+        if (!isAIVoiceEnabled()) return
 
         if (lastSpokenMessage != text) {
             tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
@@ -120,15 +130,15 @@ class MainActivity : AppCompatActivity() {
                     val humidity = humid.toInt()
 
                     if (temperature != lastTemperature || humidity != lastHumidity){
-                        val tempMsg =
-                            if (temp > 33)
-                                "The current temperature is ${temperature}°C. Hot environment. Increase airflow, provide shade, and watch for signs of heat stress."
-                            else null
+                        val tempMsg = when {
+                            temp > 33 ->   "The current temperature is ${temperature}°C. Hot environment. Increase airflow, provide shade, and watch for signs of heat stress."
+                            else -> "Cage Temperature Condition is Normal..."
+                        }
 
-                        val humidMsg =
-                            if (humid >= 90)
-                                "The current humidity is ${humidity}%. High humidity detected. Increase airflow and keep bedding dry to avoid disease risk."
-                            else null
+                        val humidMsg = when {
+                            humid >= 100 -> "The current humidity is ${humidity}%. High humidity detected. Increase airflow and keep bedding dry to avoid disease risk."
+                            else -> "Cage Humidity Condition is normal..."
+                        }
 
                         val finalMsg = "$tempMsg $humidMsg"
 

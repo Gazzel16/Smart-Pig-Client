@@ -100,7 +100,7 @@ class CagesQrScannerFragment : Fragment() {
 
                 // Update UI
                 withContext(Dispatchers.Main) {
-                    binding.cageName.text = "Cage Name: ${cage.name}"
+                    binding.cageName.text = "${cage.name}"
                     binding.pigsCount.text = "Pigs: ${cage.pigCount}"
                 }
 
